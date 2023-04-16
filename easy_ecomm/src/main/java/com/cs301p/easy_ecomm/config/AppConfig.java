@@ -21,23 +21,25 @@ import com.cs301p.easy_ecomm.daoClasses.ReviewDAO;
 import com.cs301p.easy_ecomm.daoClasses.SellerDAO;
 import com.cs301p.easy_ecomm.daoClasses.TransactionDAO;
 import com.cs301p.easy_ecomm.daoClasses.WalletDAO;
+import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
 
 @Configuration
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class })
 public class AppConfig {
-    
+
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
-    
+
     @Value("${spring.datasource.url}")
     private String url;
-    
+
     @Value("${spring.datasource.username}")
     private String username;
-    
+
     @Value("${spring.datasource.password}")
     private String password;
-    
+
     @Bean
     public DataSource dataSource() {
         return DataSourceBuilder.create()
@@ -47,52 +49,57 @@ public class AppConfig {
                 .password(password)
                 .build();
     }
-    
+
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
+    public DAO_Factory dao_Factory() {
+        return (new DAO_Factory(dataSource(), jdbcTemplator(), transactionManager()));
+    }
+
+    @Bean
     public JdbcTemplate jdbcTemplator() {
         return new JdbcTemplate(dataSource());
     }
-    
+
     @Bean
     public CustomerDAO customerDAO() {
         return new CustomerDAO(dataSource(), transactionManager(), jdbcTemplator()); // Set jdbc template.
     }
-    
+
     @Bean
     public SellerDAO sellerDAO() {
         return new SellerDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public ProductDAO productDAO() {
         return new ProductDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public AdminDAO adminDAO() {
         return new AdminDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public CartItemDAO cartDAO() {
         return new CartItemDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public ReviewDAO reviewDAO() {
         return new ReviewDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public TransactionDAO transactionDAO() {
         return new TransactionDAO(dataSource(), transactionManager(), jdbcTemplator());
     }
-    
+
     @Bean
     public WalletDAO walletDAO() {
         return new WalletDAO(dataSource(), transactionManager(), jdbcTemplator());
