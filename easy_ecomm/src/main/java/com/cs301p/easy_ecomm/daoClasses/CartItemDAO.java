@@ -11,7 +11,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.mappers.CartItemDataResponseMapper;
-import com.cs301p.easy_ecomm.mappers.CartItemMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
 
 // @Component
@@ -46,5 +45,31 @@ public class CartItemDAO {
 
         return cartItems;
     }
-    
+
+    public int addCartItem(CartItem cartItem) {
+        int count = 0;
+        String sql = "INSERT INTO cart_item (customerId, productId, quantity) VALUES (?, ?, ?)";
+
+        count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId(), cartItem.getQuantity());
+
+        return (count);
+    }
+
+    public int updateCartItem(CartItem cartItem) {
+        int count = 0;
+        String sql = "UPDATE cart_item SET quantity=? WHERE productId=? AND customerId=?;";
+
+        count = this.jdbcTemplate.update(sql, cartItem.getProductId(), cartItem.getCustomerId());
+
+        return (count);
+    }
+
+    public int deleteCartItem(CartItem cartItem){
+        int count = 0;
+        String sql = "DELETE FROM cart_item WHERE customerId=? AND productId=?;";
+
+        count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId());
+
+        return (count);
+    }
 }
