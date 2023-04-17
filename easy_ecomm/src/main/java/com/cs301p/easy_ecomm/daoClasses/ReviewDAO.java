@@ -39,6 +39,14 @@ public class ReviewDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void getPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public Review getReviewById(Review review) {
         String sql = "SELECT * FROM review WHERE id=" + review.getId();

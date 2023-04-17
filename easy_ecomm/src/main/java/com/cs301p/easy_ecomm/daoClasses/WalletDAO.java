@@ -36,6 +36,14 @@ public class WalletDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void getPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public Wallet getWalletById(Wallet wallet) {
         String sql = "SELECT * FROM wallet WHERE id=" + wallet.getId();

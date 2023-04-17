@@ -37,6 +37,14 @@ public class AdminDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void getPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public Admin getAdminById(Admin admin) {
         String sql = "SELECT * FROM admin WHERE id=" + admin.getId();

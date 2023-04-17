@@ -43,6 +43,14 @@ public class ProductDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void getPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public Product getProductById(Product product) {
         String sql = "SELECT * FROM product WHERE id=" + product.getId();

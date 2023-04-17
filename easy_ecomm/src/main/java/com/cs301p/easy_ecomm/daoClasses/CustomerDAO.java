@@ -37,6 +37,14 @@ public class CustomerDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void getPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public int addCustomer(Customer customer) {
         int count = 0;

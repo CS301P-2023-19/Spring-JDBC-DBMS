@@ -43,6 +43,14 @@ public class CartItemDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return this.platformTransactionManager;
+    }
+
+    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
     // Now, write query functions.
     public List<CartItemDataResponse> listCartItems(Customer customer) {
         String sql = "SELECT c.productId, p.name, p.price, c.quantity FROM cart_item c, product p WHERE c.customerId="
@@ -78,43 +86,5 @@ public class CartItemDAO {
         count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId());
 
         return (count);
-    }
-
-    // Usecase (E)
-    public int purchaseCart(Customer customer, int quantity) {
-        System.out.println();
-        System.out.println("Initiate multiple actions...");
-        TransactionDefinition td = new DefaultTransactionDefinition();
-        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
-
-        try {
-            // Check cart of customer.
-            CartItemDAO cartItemDAO = new CartItemDAO(this.dataSource, this.platformTransactionManager,
-                    this.jdbcTemplate);
-            List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(customer);
-
-            // Check Quantity.
-            for (CartItemDataResponse p : cartItemDataResponses) {
-                Product product = new Product();
-                product.setId(p.getProductId());
-                ProductDAO productDAO = new ProductDAO(dataSource, platformTransactionManager, jdbcTemplate);
-
-                // Handle Insufficient Quantity.
-                if (p.getQuantity() > productDAO.getProductById(product).getQuantityAvailable()) {
-                    return (product.getId());
-                }
-            }
-
-            // Insert Transaction.
-            for (CartItemDataResponse p : cartItemDataResponses) {
-                
-            }
-
-        } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex);
-            platformTransactionManager.rollback(ts);
-        }
-
-        return (0);
     }
 }
