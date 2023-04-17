@@ -104,7 +104,7 @@ public class EasyEcommApplication {
 
                 // return (count);
             }
-
+            platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
             platformTransactionManager.rollback(ts);
@@ -159,6 +159,7 @@ public class EasyEcommApplication {
                     Review review = new Review(0, customer.getId(), product.getId(), stars, content);
                     count = reviewDAO.addReview(review);
                     System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
+                    platformTransactionManager.commit(ts);
                     return (count);
                 }
             }
