@@ -60,7 +60,7 @@ public class TransactionDAO {
     public int updateTransaction(Transaction transaction) {
         int count = 0;
         String sql = "SELECT * FROM transaction WHERE customerId=" + transaction.getCustomerId() + " AND productId="
-                + transaction.getProductId() + " AND sellerId=" + transaction.getSellerId();
+                + transaction.getProductId() + " AND id=" + transaction.getId();
         List<Transaction> transactions = this.jdbcTemplate.query(sql, new TransactionMapper());
 
         // Check 7-day return policy.
@@ -69,12 +69,13 @@ public class TransactionDAO {
         long days = ChronoUnit.DAYS.between(dateDB, dateSS);
 
         if (days <= 7) {
-            sql = "UPDATE transaction SET returnStatus=? WHERE customerId=? AND productId=? AND sellerId=?;";
+            sql = "UPDATE transaction SET returnStatus=? WHERE customerId=? AND productId=? AND id=?;";
             count = this.jdbcTemplate.update(sql, transaction.getReturnStatus(), transaction.getCustomerId(),
-                    transaction.getProductId(), transaction.getSellerId());
+                    transaction.getProductId(), transaction.getId());
         }
         else{
             System.out.println("Too late to return the product.");
+            return(-1);
         }
 
         return (count);

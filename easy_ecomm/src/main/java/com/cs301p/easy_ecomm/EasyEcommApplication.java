@@ -89,6 +89,9 @@ public class EasyEcommApplication {
 
                 Product product = new Product();
                 product.setId(p.getProductId());
+                product.setPrice(p.getPrice());
+                product.setQuantityAvailable(
+                        productDAO.getProductById(product).getQuantityAvailable() - p.getQuantity());
 
                 Date date = new Date(System.currentTimeMillis());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -102,8 +105,12 @@ public class EasyEcommApplication {
                     System.out.println("INSERT INTO TRANSACTION -- ERROR:\n productID: " + p.getProductId());
                 }
 
+                // Update quantity in products table.
+                productDAO.updateProduct(product);
+
                 // return (count);
             }
+
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
@@ -171,6 +178,41 @@ public class EasyEcommApplication {
 
         System.out.println("You can not write a review for a product which you haven't purchased!");
         return (-1); // Error.
+    }
+
+    // Usecase (G)
+    public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
+        System.out.println();
+        System.out.println("Initiate multiple actions...");
+        TransactionDefinition td = new DefaultTransactionDefinition();
+        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
+
+        try {
+            // Check if customer has purchased the product.
+            TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
+            List<Transaction> transactions = transactionDAO.getTransactionsByCustomer(customer);
+            int count = 0;
+
+            for (Transaction transaction : transactions) {
+                if (transaction.getProductId() == product.getId()) {
+                    // If yes, update transaction table, 7-day policy is checked internally.
+                    Transaction updated_transaction = new Transaction(transaction.getId(), transaction.getCustomerId(),
+                            transaction.getSellerId(), transaction.getSellerId(), transaction.getDate(), true);
+                    int ret = transactionDAO.updateTransaction(updated_transaction);
+
+                    if (ret > 0) {
+                        System.out.println("Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                    }
+                    platformTransactionManager.commit(ts);
+                    return (count);
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Transaction Failed: " + ex);
+            platformTransactionManager.rollback(ts);
+        }
+
+        return (0); // Success
     }
 
     // ! TODO: deactivate dao connections.
