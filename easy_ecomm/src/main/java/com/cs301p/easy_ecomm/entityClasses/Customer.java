@@ -80,14 +80,23 @@ public class Customer {
 
     @Override
     public String toString() {
+        // return "{" +
+        // "\n id='" + getId() + "'" +
+        // ",\n name='" + getName() + "'" +
+        // ",\n email='" + getEmail() + "'" +
+        // ",\n password='" + getPassword() + "'" +
+        // ",\n phone='" + getPhone() + "'" +
+        // ",\n address='" + getAddress() + "'" +
+        // ",\n walletId='" + getWalletId() + "'" +
+        // "\n}";
+
         return "{" +
-            "\n id='" + getId() + "'" +
-            ",\n name='" + getName() + "'" +
-            ",\n email='" + getEmail() + "'" +
-            ",\n password='" + getPassword() + "'" +
-            ",\n phone='" + getPhone() + "'" +
-            ",\n address='" + getAddress() + "'" +
-            ",\n walletId='" + getWalletId() + "'" +
-            "\n}";
-    }    
+                "\n id='" + getId() + "'" +
+                ",\n name='" + getName() + "'" +
+                ",\n email='" + getEmail() + "'" +
+                ",\n phone='" + getPhone() + "'" +
+                ",\n address='" + getAddress() + "'" +
+                ",\n walletId='" + getWalletId() + "'" +
+                "\n}";
+    }
 }

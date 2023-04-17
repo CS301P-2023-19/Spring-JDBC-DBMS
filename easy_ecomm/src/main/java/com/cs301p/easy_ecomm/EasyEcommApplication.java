@@ -26,8 +26,10 @@ import com.cs301p.easy_ecomm.entityClasses.Review;
 import com.cs301p.easy_ecomm.entityClasses.Transaction;
 import com.cs301p.easy_ecomm.entityClasses.Wallet;
 import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
+import com.cs301p.easy_ecomm.mappers.ShippingDetailsDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
+import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
 
 @SpringBootApplication
 public class EasyEcommApplication {
@@ -37,22 +39,19 @@ public class EasyEcommApplication {
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(EasyEcommApplication.class, args);
         DAO_Factory dao_Factory = (DAO_Factory) applicationContext.getBean(DAO_Factory.class);
-
-        // CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
-        // WalletDAO walletDAO = dao_Factory.getWalletDAO();
-        // Wallet w1 = new Wallet(0, "1211-3344-2556-1095", (float)440021.14); //
-        // Auto-increment, can pass any id while inserting.
-        // Customer c1 = new Customer(0, "Customer 1", "em1@tm.com", "pass123",
-        // "1234432100", "Chennai, Tamil Nadu", 3);
-
-        // int count = walletDAO.addWallet(w1);
-        // System.out.println(count + " records added to wallet table.");
-        // count = customerDAO.addCustomer(c1);
-        // System.out.println(count + " records added to customer table.");
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Usecase (E)
+    // Usecase (A)
+    // Direct call using productDAO.
+
+    // Usecase (B)
+
+    // Usecase (C)
+
+    // Usecase (D)
+
+    // Usecase (E) (IMT2021055)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -140,7 +139,7 @@ public class EasyEcommApplication {
         return (0);
     }
 
-    // Usecase (F)
+    // Usecase (F) (IMT2021055)
     public int reviewProduct(Customer customer, Product product, int stars, String content, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -180,7 +179,7 @@ public class EasyEcommApplication {
         return (-1); // Error.
     }
 
-    // Usecase (G)
+    // Usecase (G) (IMT2021055)
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -213,6 +212,32 @@ public class EasyEcommApplication {
         }
 
         return (0); // Success
+    }
+
+    // ADDITIONAL: Get customer address of a particular transaction. (IMT2021055).
+    public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
+        System.out.println();
+        System.out.println("Initiate multiple actions...");
+        TransactionDefinition td = new DefaultTransactionDefinition();
+        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
+        String sql;
+
+        try {
+            sql = "SELECT t.id, t.productId, c.name, c.address FROM transaction as t, customer as c WHERE t.customerId=c.id AND t.id="
+                    + transaction.getId();
+            List<ShippingDetailsDataResponse> shippingDetailsDataResponses = this.jdbcTemplate.query(sql,
+                    new ShippingDetailsDataResponseMapper());
+
+            String res = shippingDetailsDataResponses.get(0).getCustomerAddress();
+            System.out
+                    .println("Customer who made the transaction with Id: " + transaction.getId() + " lived at: " + res);
+            platformTransactionManager.commit(ts);
+        } catch (Exception ex) {
+            System.out.println("Transaction Failed: " + ex);
+            platformTransactionManager.rollback(ts);
+        }
+
+        return (0);
     }
 
     // ! TODO: deactivate dao connections.
