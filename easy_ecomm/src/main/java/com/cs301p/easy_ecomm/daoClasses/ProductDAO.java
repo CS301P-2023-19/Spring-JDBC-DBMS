@@ -95,7 +95,6 @@ public class ProductDAO {
     public List<Product> listProducts(FilterBy filter_by, OrderBy sort_by) {
         String sql;
         List<Product> result = null;
-        int count = -1;
         // Can do between x AND x.
         try {
             if (filter_by.getIsBetween()) {
@@ -114,6 +113,10 @@ public class ProductDAO {
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+
+        if(result.size() == 0){
+            return(null);
         }
 
         return (result);

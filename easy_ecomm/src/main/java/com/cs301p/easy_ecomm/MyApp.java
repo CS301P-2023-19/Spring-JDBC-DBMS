@@ -19,17 +19,21 @@ import com.cs301p.easy_ecomm.daoClasses.CartItemDAO;
 import com.cs301p.easy_ecomm.daoClasses.CustomerDAO;
 import com.cs301p.easy_ecomm.daoClasses.ProductDAO;
 import com.cs301p.easy_ecomm.daoClasses.ReviewDAO;
+import com.cs301p.easy_ecomm.daoClasses.SellerDAO;
 import com.cs301p.easy_ecomm.daoClasses.TransactionDAO;
 import com.cs301p.easy_ecomm.daoClasses.WalletDAO;
 import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Review;
+import com.cs301p.easy_ecomm.entityClasses.Seller;
 import com.cs301p.easy_ecomm.entityClasses.Transaction;
 import com.cs301p.easy_ecomm.mappers.ShippingDetailsDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
 import com.cs301p.easy_ecomm.mappers.WalletMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
 import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
+import com.cs301p.easy_ecomm.utilClasses.FilterBy;
+import com.cs301p.easy_ecomm.utilClasses.OrderBy;
 
 public class MyApp {
     private PlatformTransactionManager platformTransactionManager;
@@ -73,11 +77,32 @@ public class MyApp {
     }
 
     // Usecase (B)
+    public int listingActions(FilterBy filterBy, OrderBy sortBy, DAO_Factory dao_Factory) {
+        ProductDAO productDAO = dao_Factory.getProductDAO();
+        List<Product> products = productDAO.listProducts(filterBy, sortBy);
+
+        if (products == null) {
+            System.out.println("No matching products found!");
+            return (-1);
+        }
+
+        System.out.println(
+                "-----------------------------------------------Requested products are:--------------------------------------------");
+        for (Product product : products) {
+            System.out.println(product);
+            System.out.println();
+        }
+        System.out.println(
+                "------------------------------------------------------------------------------------------------------------------");
+
+        return (0);
+    }
 
     // Usecase (C) (IMT2021055)
-    public int walletActions(Customer customer, Wallet wallet, String choice, DAO_Factory dao_Factory) {
+    public int walletActions(Customer customer, Seller seller, Wallet wallet, String choice, DAO_Factory dao_Factory) {
         WalletDAO walletDAO = dao_Factory.getWalletDAO();
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
+        SellerDAO sellerDAO = dao_Factory.getSellerDAO();
         int count = -1;
         Wallet w_query;
         Wallet w = null;
@@ -98,14 +123,25 @@ public class MyApp {
                         int new_id = wallets.get(0).getId();
                         System.out.println("Wallet added with Id: " + new_id);
 
-                        customer.setWalletId(new_id);
-                        int cnt = customerDAO.updateCustomer(customer);
-                        if (cnt > 0) {
-                            System.out.println("Linked wallet Id: " + new_id + " to customer Id: " + customer.getId());
-                            platformTransactionManager.commit(ts);
+                        if (customer != null) {
+                            customer.setWalletId(new_id);
+                            int cnt = customerDAO.updateCustomer(customer);
+                            if (cnt > 0) {
+                                System.out.println(
+                                        "Linked wallet Id: " + new_id + " to customer Id: " + customer.getId());
+                                platformTransactionManager.commit(ts);
+                            }
+                        } else {
+                            seller.setWalletId(new_id);
+                            int cnt = sellerDAO.updateSeller(seller);
+                            if (cnt > 0) {
+                                System.out.println(
+                                        "Linked wallet Id: " + new_id + " to seller Id: " + seller.getId());
+                                platformTransactionManager.commit(ts);
+                            }
                         }
-                    }
-                    else{
+
+                    } else {
                         System.out.println("Wallet add failed!");
                     }
                 } catch (Exception ex) {

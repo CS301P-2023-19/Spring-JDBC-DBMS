@@ -78,9 +78,9 @@ public class SellerDAO {
 
     public int updateSeller(Seller seller) {
         int count = 0;
-        String sql = "UPDATE seller SET phone=?, email=? WHERE id=?;";
+        String sql = "UPDATE seller SET phone=?, email=?, walletId=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, seller.getPhone(), seller.getEmail(), seller.getId());
+        count = this.jdbcTemplate.update(sql, seller.getPhone(), seller.getEmail(), seller.getWalletId(), seller.getId());
 
         return (count);
     }
