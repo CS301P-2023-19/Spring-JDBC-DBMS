@@ -105,6 +105,9 @@ public class MyApp {
                             platformTransactionManager.commit(ts);
                         }
                     }
+                    else{
+                        System.out.println("Wallet add failed!");
+                    }
                 } catch (Exception ex) {
                     System.out.println("Transaction Failed: " + ex);
                     platformTransactionManager.rollback(ts);

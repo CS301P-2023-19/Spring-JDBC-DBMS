@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 // import org.springframework.stereotype.Component;
@@ -49,6 +50,10 @@ public class WalletDAO {
         String sql = "SELECT * FROM wallet WHERE id=" + wallet.getId();
         List <Wallet> wallets = this.jdbcTemplate.query(sql, new WalletMapper());
 
+        if(wallets.size() == 0){
+            return(null);
+        }
+
         return wallets.get(0);
     }
 
@@ -56,7 +61,12 @@ public class WalletDAO {
         int count = 0;
         String sql = "INSERT INTO wallet(credit_card_no, money) VALUES (?, ?);";
 
-        count = this.jdbcTemplate.update(sql, wallet.getCredit_card_no(), wallet.getMoney());
+        try {
+            count = this.jdbcTemplate.update(sql, wallet.getCredit_card_no(), wallet.getMoney());
+        } catch (DuplicateKeyException e) {
+            System.out.println("Credit card already in use! Can not link new wallet");
+            return(-1);
+        }
 
         return (count);
     }

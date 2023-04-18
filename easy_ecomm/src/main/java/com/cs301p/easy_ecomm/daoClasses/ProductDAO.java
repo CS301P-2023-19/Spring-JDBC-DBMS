@@ -6,18 +6,13 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Seller;
 import com.cs301p.easy_ecomm.mappers.ProductMapper;
-import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
+import com.cs301p.easy_ecomm.utilClasses.FilterBy;
+import com.cs301p.easy_ecomm.utilClasses.OrderBy;
 
-// @Component
 public class ProductDAO {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
@@ -78,7 +73,7 @@ public class ProductDAO {
         return (count);
     }
 
-    public int deleteProduct(Product product){
+    public int deleteProduct(Product product) {
         int count = 0;
         String sql = "DELETE FROM product WHERE id=?;";
 
@@ -87,7 +82,7 @@ public class ProductDAO {
         return (count);
     }
 
-    public Seller getSellerByProductId(Product product){
+    public Seller getSellerByProductId(Product product) {
         String sql = "SELECT sellerId from product where id=" + product.getId();
         List<Product> products = this.jdbcTemplate.query(sql, new ProductMapper());
 
@@ -97,6 +92,31 @@ public class ProductDAO {
         return s;
     }
 
-    // ! TODO: listProducts, filter by and order by
+    public List<Product> listProducts(FilterBy filter_by, OrderBy sort_by) {
+        String sql;
+        List<Product> result = null;
+        int count = -1;
+        // Can do between x AND x.
+        try {
+            if (filter_by.getIsBetween()) {
+                sql = "SELECT * FROM product WHERE " + filter_by.getAttr() + " BETWEEN " + filter_by.getL_val()
+                        + " AND " + filter_by.getH_val() + " ORDER BY " + sort_by.getAttr() + " "
+                        + sort_by.getDirection();
+
+                result = this.jdbcTemplate.query(sql, new ProductMapper());
+
+            } else {
+                sql = "SELECT * FROM product WHERE " + filter_by.getAttr() + "=" + filter_by.getL_val() + " ORDER BY "
+                        + sort_by.getAttr() + " "
+                        + sort_by.getDirection();
+                result = this.jdbcTemplate.query(sql, new ProductMapper());
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return (result);
+    }
 
 }
