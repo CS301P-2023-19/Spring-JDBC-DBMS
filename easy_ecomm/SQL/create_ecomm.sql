@@ -12,7 +12,7 @@ CREATE TABLE customer(
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    walletId INT NOT NULL UNIQUE,
+    walletId INT UNIQUE DEFAULT null,
     CONSTRAINT customerPK PRIMARY KEY (id)
 );
 
@@ -22,7 +22,7 @@ CREATE TABLE seller(
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
-    walletId INT NOT NULL UNIQUE, 
+    walletId INT UNIQUE DEFAULT null, 
     CONSTRAINT sellerPK PRIMARY KEY (id)
 );
 

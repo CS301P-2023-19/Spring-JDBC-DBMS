@@ -29,6 +29,7 @@ import com.cs301p.easy_ecomm.entityClasses.Wallet;
 import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
 import com.cs301p.easy_ecomm.mappers.ShippingDetailsDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
+import com.cs301p.easy_ecomm.mappers.WalletMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
 import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
 
@@ -76,7 +77,65 @@ public class EasyEcommApplication {
 
     // Usecase (B)
 
-    // Usecase (C)
+    // Usecase (C) (IMT2021055)
+    public int walletActions(Customer customer, Wallet wallet, String choice, DAO_Factory dao_Factory) {
+        System.out.println();
+        System.out.println("Initiate multiple actions...");
+        TransactionDefinition td = new DefaultTransactionDefinition();
+        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
+        
+        WalletDAO walletDAO = dao_Factory.getWalletDAO();
+        CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
+        int count = -1;
+        Wallet w_query;
+        Wallet w = null;
+        
+        switch (choice.strip().toLowerCase()) {
+            case "link":
+                try {
+                    count = walletDAO.addWallet(wallet);
+                    if (count > 0) {
+                        // Generate new transactionId.
+                        String sql = "SELECT * FROM wallet WHERE id=(SELECT MAX(id) FROM wallet);";
+                        List<Wallet> wallets = this.jdbcTemplate.query(sql, new WalletMapper());
+
+                        int new_id = wallets.get(0).getId();
+                        System.out.println("Wallet added with Id: " + new_id);
+
+                        customer.setWalletId(new_id);
+                        int cnt = customerDAO.updateCustomer(customer);
+                        if (cnt > 0) {
+                            System.out.println("Linked wallet Id: " + new_id + " to customer Id: " + customer.getId());
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Transaction Failed: " + ex);
+                    platformTransactionManager.rollback(ts);
+                    return (-1);
+                }
+                break;
+            case "check":
+                w_query = new Wallet(customer.getWalletId(), "-", null);
+                w = walletDAO.getWalletById(w_query);
+                if (w == null) {
+                    System.out.println("Wallet not found for given customer Id: " + customer.getId());
+                } else {
+                    System.out.println("Current ballance: " + w.getMoney());
+                }
+                break;
+            case "update":
+                count = walletDAO.updateWallet(wallet);
+                if(count > 0){
+                    System.out.println("Updated wallet with Id: " + wallet.getId() + "\nNew balance: " + wallet.getMoney());
+                }
+                break;
+            default:
+                System.out.println("Invalid choice for this operation.");
+                return (-1);// Error
+        }
+
+        return (0);
+    }
 
     // Usecase (D) (IMT2021055)
     public int cartItemActions(CartItem cartItem, String choice, DAO_Factory dao_Factory) {
@@ -93,31 +152,33 @@ public class EasyEcommApplication {
                 return (count);
             case "update":
                 count = cartItemDAO.updateCartItem(cartItem);
-                if(count > 0){
+                if (count > 0) {
                     System.out.println("Updated product with Id: " + cartItem.getProductId()
-                        + " in cart by customer with Id: " + cartItem.getCustomerId());
+                            + " in cart by customer with Id: " + cartItem.getCustomerId());
                 }
                 return (count);
             case "remove":
                 count = cartItemDAO.deleteCartItem(cartItem);
-                if(count > 0){
+                if (count > 0) {
                     System.out.println("Removed product with Id: " + cartItem.getProductId()
-                        + " from cart by customer with Id: " + cartItem.getCustomerId());
+                            + " from cart by customer with Id: " + cartItem.getCustomerId());
                 }
                 return (count);
             case "list":
                 Customer c = new Customer();
                 c.setId(cartItem.getCustomerId());
-                List <CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
+                List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
 
-                System.out.println("------------------------------------------------------------------------------------------");
+                System.out.println(
+                        "------------------------------------------------------------------------------------------");
                 System.out.println("Cart of customer with Id: " + c.getId());
                 for (CartItemDataResponse cartItemDataResponse : cartItemDataResponses) {
                     System.out.println();
-                    System.out.println(cartItemDataResponse);                    
+                    System.out.println(cartItemDataResponse);
                     System.out.println();
                 }
-                System.out.println("------------------------------------------------------------------------------------------");
+                System.out.println(
+                        "------------------------------------------------------------------------------------------");
 
                 return (cartItemDataResponses.size());
             default:
@@ -182,13 +243,19 @@ public class EasyEcommApplication {
                 // Update quantity in products table.
                 productDAO.updateProduct(product);
 
-                // return (count);
+                // Delete from cart.
+                CartItem ci = new CartItem(customer.getId(), p.getProductId(), 0);
+                cartItemDAO.deleteCartItem(ci);
+
+                // !TODO: Check and Deduct money.
+
             }
 
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
             platformTransactionManager.rollback(ts);
+            return (-1);
         }
         return (0); // Success.
     }
@@ -314,6 +381,4 @@ public class EasyEcommApplication {
 
         return (0);
     }
-
-    // ! TODO: deactivate dao connections.
 }

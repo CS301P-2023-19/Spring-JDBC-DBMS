@@ -47,10 +47,10 @@ public class SellerDAO {
     // Now, write query functions.
     public int addSeller(Seller seller) {
         int count = 0;
-        String sql = "INSERT INTO seller(name, email, password, phone, walletId) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO seller(name, email, password, phone) VALUES (?, ?, ?, ?);";
 
         count = this.jdbcTemplate.update(sql, seller.getName(), seller.getEmail(), seller.getPassword(),
-                seller.getPhone(), seller.getWalletId());
+                seller.getPhone());
 
         return (count);
     }

@@ -48,10 +48,10 @@ public class CustomerDAO {
     // Now, write query functions.
     public int addCustomer(Customer customer) {
         int count = 0;
-        String sql = "INSERT INTO customer(name, email, password, phone, address, walletId) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO customer(name, email, password, phone, address) VALUES (?, ?, ?, ?, ?);";
 
         count = this.jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getPassword(),
-                customer.getPhone(), customer.getAddress(), customer.getWalletId());
+                customer.getPhone(), customer.getAddress());
 
         return (count);
     }
@@ -79,9 +79,9 @@ public class CustomerDAO {
 
     public int updateCustomer(Customer customer) {
         int count = 0;
-        String sql = "UPDATE customer SET phone=?, address=?, email=? WHERE id=?;";
+        String sql = "UPDATE customer SET phone=?, address=?, email=?, walletId=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, customer.getPhone(), customer.getAddress(), customer.getEmail(), customer.getId());
+        count = this.jdbcTemplate.update(sql, customer.getPhone(), customer.getAddress(), customer.getEmail(), customer.getWalletId(), customer.getId());
 
         return (count);
     }
