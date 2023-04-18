@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.cs301p.easy_ecomm.MyApp;
 import com.cs301p.easy_ecomm.daoClasses.AdminDAO;
 import com.cs301p.easy_ecomm.daoClasses.CartItemDAO;
 import com.cs301p.easy_ecomm.daoClasses.CustomerDAO;
@@ -63,6 +64,11 @@ public class AppConfig {
     @Bean
     public JdbcTemplate jdbcTemplator() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public MyApp myApp() {
+        return new MyApp(transactionManager(), jdbcTemplator());
     }
 
     @Bean
