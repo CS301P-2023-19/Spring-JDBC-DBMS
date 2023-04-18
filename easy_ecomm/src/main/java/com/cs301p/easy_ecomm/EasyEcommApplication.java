@@ -40,32 +40,33 @@ public class EasyEcommApplication {
             System.out.println();
             System.out.println();
 
-            System.out.println("---------------User Menu-------------------");
+            System.out.println("----------------------------------------------------------User Menu--------------------------------------------------------------");
             System.out.println("Choose type of user: ");
             System.out.println("1.) Admin");
             System.out.println("2.) Customer");
             System.out.println("3.) Seller");
             System.out.println("4.) Quit");
             String q = scan.next().strip().toLowerCase();
-            System.out.println("-------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
 
             if (q.equals("quit")) {
+                scan.close();
                 System.exit(0);
             }
 
-            System.out.println("---------------Login Menu-------------------");
+            System.out.println("----------------------------------------------------------Login Menu--------------------------------------------------------------");
             System.out.println("Enter Name: ");
             System.out.print("=> ");
             String usrName = scan.next();
             System.out.println("Enter Password: ");
             System.out.print("=> ");
             String psswd = scan.next();
-            System.out.println("--------------------------------------------");
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
 
             // ! TODO Implement login.
 
             if (q.equals("admin")) {
-                System.out.println("---------------Admin Menu-------------------");
+                System.out.println("----------------------------------------------------------Admin Menu--------------------------------------------------------------");
                 System.out.println("Choose type of user: ");
                 System.out.println("1.) Add Customer");
                 System.out.println("2.) Add Seller");
@@ -75,7 +76,7 @@ public class EasyEcommApplication {
                 System.out.println("6.) List All Sellers");
                 scan.nextLine();
                 ch = scan.nextLine().strip().toLowerCase();
-                System.out.println("--------------------------------------------");
+                System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
 
                 if (ch.equals("add customer")) {
                     System.out.println(
@@ -108,7 +109,7 @@ public class EasyEcommApplication {
                 myApp.adminActions(customer, seller, ch, dao_Factory);
 
             } else if (q.equals("customer")) {
-                System.out.println("---------------Customer Menu-------------------");
+                System.out.println("----------------------------------------------------------Customer Menu--------------------------------------------------------------");
                 System.out.println("Choose type of user: ");
                 System.out.println("1.) List Products");
                 System.out.println("2.) Add Product To Cart");
@@ -119,10 +120,11 @@ public class EasyEcommApplication {
                 System.out.println("5.) Return A Product");
                 System.out.println("6.) Link Wallet");
                 System.out.println("7.) Update Wallet");
+                scan.nextLine();
                 ch = scan.nextLine().strip().toLowerCase();
-                System.out.println("-----------------------------------------------");
+                System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
-                switch (ch.strip().toLowerCase()) {
+                switch (ch) {
                     case "list products":
 
                         break;
@@ -156,34 +158,43 @@ public class EasyEcommApplication {
 
             } else if (q.equals("seller")) {
 
-                System.out.println("---------------Seller Menu-------------------");
+                System.out.println("----------------------------------------------------------Seller Menu--------------------------------------------------------------");
                 System.out.println("Choose type of user: ");
                 System.out.println("1.) Add Product");
                 System.out.println("2.) Remove Product");
                 System.out.println("3.) Update Product");
                 System.out.println("4.) Link Wallet");
                 System.out.println("5.) Update Wallet");
+                scan.nextLine();
                 ch = scan.nextLine().strip().toLowerCase();
-                System.out.println("---------------------------------------------");
+                System.out.println("-----------------------------------------------------------------------------------------------------------------------------------");
 
-                switch (ch.strip().toLowerCase()) {
-                    case "add product":
+                if (ch.equals("add product")) {
+                    System.out.println(
+                            "Input type, name, sellerId, price and quantity as continuous space-seperated strings:");
+                    product.setType(scan.next());
+                    product.setName(scan.next());
+                    product.setSellerId(scan.nextInt());
+                    product.setPrice(scan.nextFloat());
+                    product.setQuantityAvailable(scan.nextInt());
+                    myApp.sellerActions(product, ch, dao_Factory);
+                } else if (ch.equals("remove product")) {
+                    System.out.println("Input product Id to remove:");
+                    product.setId(scan.nextInt());
+                    myApp.sellerActions(product, ch, dao_Factory);
+                } else if (ch.equals("update product")) {
+                    System.out.println("Input product Id to update:");
+                    product.setId(scan.nextInt());
+                    System.out.println("Input updated price:");
+                    product.setPrice(scan.nextFloat());
+                    System.out.println("Input updated quantity:");
+                    product.setQuantityAvailable(scan.nextInt());
+                    myApp.sellerActions(product, ch, dao_Factory);
+                } else if (ch.equals("link wallet")) {
+                } else if (ch.equals("update wallet")) {
 
-                        break;
-                    case "remove product":
-
-                        break;
-                    case "update product":
-
-                        break;
-                    case "link wallet":
-
-                        break;
-                    case "update wallet":
-
-                        break;
-                    default:
-                        break;
+                } else {
+                    System.out.println("Invalid...........");
                 }
 
             } else {

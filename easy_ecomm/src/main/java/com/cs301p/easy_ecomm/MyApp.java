@@ -50,7 +50,7 @@ public class MyApp {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         int count = -1;
         switch (choice.strip().toLowerCase()) {
-            case "add":
+            case "add product":
                 count = productDAO.addProduct(product);
                 if (count > 0) {
                     System.out
@@ -58,13 +58,13 @@ public class MyApp {
                                     + " added successfully!");
                 }
                 return (count);
-            case "update":
+            case "update product":
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
                 }
                 return (count);
-            case "remove":
+            case "remove product":
                 count = productDAO.deleteProduct(product);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + product.getId());
