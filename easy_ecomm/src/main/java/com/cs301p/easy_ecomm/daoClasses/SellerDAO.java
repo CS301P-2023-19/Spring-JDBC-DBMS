@@ -63,7 +63,7 @@ public class SellerDAO {
     }
 
     public Seller getSellerByEmail(Seller seller) {
-        String sql = "SELECT * FROM seller WHERE email=" + seller.getEmail();
+        String sql = "SELECT * FROM seller WHERE email='" + seller.getEmail() + "'";
         List<Seller> sellers = this.jdbcTemplate.query(sql, new SellerMapper());
 
         return sellers.get(0);

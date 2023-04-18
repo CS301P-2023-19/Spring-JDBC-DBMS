@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.cs301p.easy_ecomm.daoClasses.AdminDAO;
 import com.cs301p.easy_ecomm.daoClasses.CartItemDAO;
 import com.cs301p.easy_ecomm.daoClasses.CustomerDAO;
 import com.cs301p.easy_ecomm.daoClasses.ProductDAO;
@@ -22,6 +23,7 @@ import com.cs301p.easy_ecomm.daoClasses.ReviewDAO;
 import com.cs301p.easy_ecomm.daoClasses.SellerDAO;
 import com.cs301p.easy_ecomm.daoClasses.TransactionDAO;
 import com.cs301p.easy_ecomm.daoClasses.WalletDAO;
+import com.cs301p.easy_ecomm.entityClasses.Admin;
 import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Review;
@@ -462,13 +464,13 @@ public class MyApp {
                 sellerDAO.deleteSeller(seller);
                 break;
             case "list all customers":
-                List <Customer> customers = customerDAO.getAllCustomers();
+                List<Customer> customers = customerDAO.getAllCustomers();
                 for (Customer c : customers) {
                     System.out.println(c);
                 }
                 break;
             case "list all sellers":
-                List <Seller> sellers = sellerDAO.getAllSellers();
+                List<Seller> sellers = sellerDAO.getAllSellers();
                 for (Seller s : sellers) {
                     System.out.println(s);
                 }
@@ -478,5 +480,61 @@ public class MyApp {
         }
 
         return (0);
+    }
+
+    // Auth Actions
+    public int authActions(String email, String password, String userType, DAO_Factory dao_Factory) {
+
+        switch (userType) {
+            case "customer":
+                Customer customer = new Customer();
+                customer.setEmail(email);
+                CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
+                customer = customerDAO.getCustomerByEmail(customer);
+
+                if (customer == null) {
+                    return (-1);
+                } else {
+                    if (customer.getEmail().equals(email) && customer.getPassword().equals(password)) {
+                        return (0);
+                    } else {
+                        return (-1);
+                    }
+                }
+            case "seller":
+                Seller seller = new Seller();
+                seller.setEmail(email);
+                SellerDAO sellerDAO = dao_Factory.getSellerDAO();
+                seller = sellerDAO.getSellerByEmail(seller);
+
+                if (seller == null) {
+                    return (-1);
+                } else {
+                    if (seller.getEmail().equals(email) && seller.getPassword().equals(password)) {
+                        return (0);
+                    } else {
+                        return (-1);
+                    }
+                }
+            case "admin":
+                System.out.println("a1");
+                Admin admin = new Admin();
+                admin.setA_name(email);
+                admin.setA_password(password);
+                AdminDAO adminDAO = dao_Factory.getAdminDAO();
+                admin = adminDAO.getAdminByName(admin);
+                if (admin == null) {
+                    return (-1);
+                } else {
+                    ;
+                    if (admin.getA_name().equals(email) && admin.getA_password().equals(password)) {
+                        return (0);
+                    } else {
+                        return (-1);
+                    }
+                }
+            default:
+                return (-1);
+        }
     }
 }

@@ -60,12 +60,20 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customer WHERE id=" + customer.getId();
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
 
+        if(customers.size() == 0){
+            return(null);
+        }
+
         return customers.get(0);
     }
 
     public Customer getCustomerByEmail(Customer customer) {
-        String sql = "SELECT * FROM customer WHERE email=" + customer.getEmail();
+        String sql = "SELECT * FROM customer WHERE email='" + customer.getEmail() + "'";
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
+
+        if(customers.size() == 0){
+            return(null);
+        }
 
         return customers.get(0);
     }
@@ -73,6 +81,10 @@ public class CustomerDAO {
     public List<Customer> getAllCustomers() {
         String sql = "SELECT * FROM customer;";
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
+
+        if(customers.size() == 0){
+            return(null);
+        }
 
         return customers;
     }

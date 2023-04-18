@@ -50,6 +50,21 @@ public class AdminDAO {
         String sql = "SELECT * FROM admin WHERE id=" + admin.getId();
         List<Admin> admins = this.jdbcTemplate.query(sql, new AdminMapper());
 
+        if(admins.size() == 0){
+            return(null);
+        }
+
+        return admins.get(0);
+    }
+
+    public Admin getAdminByName(Admin admin) {
+        String sql = "SELECT * FROM admin WHERE a_name='" + admin.getA_name() + "'";
+        List<Admin> admins = this.jdbcTemplate.query(sql, new AdminMapper());
+
+        if(admins.size() == 0){
+            return(null);
+        }
+
         return admins.get(0);
     }
 }

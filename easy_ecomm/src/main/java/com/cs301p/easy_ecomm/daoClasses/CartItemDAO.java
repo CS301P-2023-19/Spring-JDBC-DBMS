@@ -6,18 +6,12 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
-import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.mappers.CartItemDataResponseMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
 
-// @Component
 public class CartItemDAO {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
