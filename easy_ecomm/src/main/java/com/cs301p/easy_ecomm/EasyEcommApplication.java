@@ -23,6 +23,7 @@ import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Review;
+import com.cs301p.easy_ecomm.entityClasses.Seller;
 import com.cs301p.easy_ecomm.entityClasses.Transaction;
 import com.cs301p.easy_ecomm.entityClasses.Wallet;
 import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
@@ -42,14 +43,36 @@ public class EasyEcommApplication {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Usecase (A)
-    // Direct call using productDAO.
+    // Usecase (A) (IMT2021055)
+    public int sellerActions(Product product, String choice, DAO_Factory dao_Factory) {
+        ProductDAO productDAO = dao_Factory.getProductDAO();
+        int count = -1;
+        switch (choice.strip().toLowerCase()) {
+            case "add":
+                count = productDAO.addProduct(product);
+                System.out
+                        .println("New product from seller with Id: " + product.getSellerId() + " added successfully!");
+                return (count);
+            case "update":
+                count = productDAO.updateProduct(product);
+                System.out.println("Updated product with Id: " + product.getId());
+                return (count);
+            case "remove":
+                count = productDAO.deleteProduct(product);
+                System.out.println("Removed product with Id: " + product.getId());
+                return (count);
+            default:
+                System.out.println("Invalid choice for this operation.");
+                return (-1);// Error
+        }
+    }
 
     // Usecase (B)
 
     // Usecase (C)
 
     // Usecase (D)
+
 
     // Usecase (E) (IMT2021055)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {

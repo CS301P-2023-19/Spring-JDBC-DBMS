@@ -61,9 +61,9 @@ public class ProductDAO {
 
     public int addProduct(Product product) {
         int count = 0;
-        String sql = "INSERT INTO product(id, type, name, sellerId, price, quantityAvailable) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO product(type, name, sellerId, price, quantityAvailable) VALUES (?, ?, ?, ?, ?);";
 
-        count = this.jdbcTemplate.update(sql, product.getId(), product.getType(), product.getSellerId(),
+        count = this.jdbcTemplate.update(sql, product.getType(), product.getSellerId(),
                 product.getPrice(), product.getQuantityAvailable());
 
         return (count);
@@ -71,7 +71,7 @@ public class ProductDAO {
 
     public int updateProduct(Product product) {
         int count = 0;
-        String sql = "UPDATE product SET price=?, quantity_availabe=? WHERE id=?;";
+        String sql = "UPDATE product SET price=?, quantityAvailabe=? WHERE id=?;";
 
         count = this.jdbcTemplate.update(sql, product.getPrice(), product.getQuantityAvailable(), product.getId());
 
