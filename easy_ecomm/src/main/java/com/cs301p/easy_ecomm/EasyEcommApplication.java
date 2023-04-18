@@ -34,160 +34,163 @@ public class EasyEcommApplication {
         MyApp myApp = (MyApp) applicationContext.getBean(MyApp.class);
 
         while (true) {
+            String ch = null;
             System.out.println();
-            myApp.walletActions(customer, null, walletC, "link", dao_Factory);
-            myApp.walletActions(null, seller, walletS, "link", dao_Factory);
+            System.out.println();
+            System.out.println();
+            System.out.println();
 
             System.out.println("---------------User Menu-------------------");
             System.out.println("Choose type of user: ");
             System.out.println("1.) Admin");
             System.out.println("2.) Customer");
             System.out.println("3.) Seller");
-            System.out.print("=> ");
+            System.out.println("4.) Quit");
+            String q = scan.next().strip().toLowerCase();
             System.out.println("-------------------------------------------");
 
-            String q = scan.next();
+            if (q.equals("quit")) {
+                System.exit(0);
+            }
 
             System.out.println("---------------Login Menu-------------------");
             System.out.println("Enter Name: ");
-            System.out.println("=> ");
+            System.out.print("=> ");
             String usrName = scan.next();
             System.out.println("Enter Password: ");
+            System.out.print("=> ");
             String psswd = scan.next();
-            System.out.println("=> ");
             System.out.println("--------------------------------------------");
 
             // ! TODO Implement login.
 
-            switch (q.strip().toLowerCase()) {
-                case "admin":
-                    System.out.println("---------------Admin Menu-------------------");
-                    System.out.println("Choose type of user: ");
-                    System.out.println("1.) Add Customer");
-                    System.out.println("2.) Add Seller");
-                    System.out.println("3.) Remove Customer");
-                    System.out.println("4.) Remove Seller");
-                    System.out.println("5.) List All Customers");
-                    System.out.println("6.) List All Sellers");
-                    System.out.println("--------------------------------------------");
+            if (q.equals("admin")) {
+                System.out.println("---------------Admin Menu-------------------");
+                System.out.println("Choose type of user: ");
+                System.out.println("1.) Add Customer");
+                System.out.println("2.) Add Seller");
+                System.out.println("3.) Remove Customer");
+                System.out.println("4.) Remove Seller");
+                System.out.println("5.) List All Customers");
+                System.out.println("6.) List All Sellers");
+                scan.nextLine();
+                ch = scan.nextLine().strip().toLowerCase();
+                System.out.println("--------------------------------------------");
 
-                    q = scan.next();
+                if (ch.equals("add customer")) {
+                    System.out.println(
+                            "Input name, email, password, phone and address as continuous space-seperated strings:");
+                    customer.setName(scan.next());
+                    customer.setEmail(scan.next());
+                    customer.setPassword(scan.next());
+                    customer.setPhone(scan.next());
+                    customer.setAddress(scan.next());
+                } else if (ch.equals("add seller")) {
+                    System.out.println(
+                            "Input name, email, password and phone as continuous space-seperated strings:");
+                    seller.setName(scan.next());
+                    seller.setEmail(scan.next());
+                    seller.setPassword(scan.next());
+                    seller.setPhone(scan.next());
+                } else if (ch.equals("remove customer")) {
+                    System.out.println("Input customer Id to remove:");
+                    customer.setId(scan.nextInt());
+                } else if (ch.equals("remove seller")) {
+                    System.out.println("Input seller Id to remove:");
+                    seller.setId(scan.nextInt());
+                } else if (ch.equals("list all customers")) {
+                    System.out.println("List of all customers:");
+                } else if (ch.equals("list all sellers")) {
+                    System.out.println("List of all sellers:");
+                } else {
+                    System.out.println("Invalid...");
+                }
+                myApp.adminActions(customer, seller, ch, dao_Factory);
 
-                    switch (q.strip().toLowerCase()) {
-                        case "add customer":
+            } else if (q.equals("customer")) {
+                System.out.println("---------------Customer Menu-------------------");
+                System.out.println("Choose type of user: ");
+                System.out.println("1.) List Products");
+                System.out.println("2.) Add Product To Cart");
+                System.out.println("3.) Remove Product From Cart");
+                System.out.println("4.) Update Product In Cart");
+                System.out.println("5.) Purchase Products In Cart");
+                System.out.println("4.) Review A Product");
+                System.out.println("5.) Return A Product");
+                System.out.println("6.) Link Wallet");
+                System.out.println("7.) Update Wallet");
+                ch = scan.nextLine().strip().toLowerCase();
+                System.out.println("-----------------------------------------------");
 
-                            break;
-                        case "add seller":
+                switch (ch.strip().toLowerCase()) {
+                    case "list products":
 
-                            break;
-                        case "remove customer":
+                        break;
+                    case "add product to cart":
 
-                            break;
-                        case "remove seller":
+                        break;
+                    case "remove product from cart":
 
-                            break;
-                        case "list all customers":
+                        break;
+                    case "update product in cart":
 
-                            break;
-                        case "list all sellers":
+                        break;
+                    case "purchase products in cart":
 
-                            break;
-                        default:
-                            break;
-                    }
+                        break;
+                    case "review a product":
 
-                    break;
-                case "customer":
-                    System.out.println("---------------Customer Menu-------------------");
-                    System.out.println("Choose type of user: ");
-                    System.out.println("1.) List Products");
-                    System.out.println("2.) Add Product To Cart");
-                    System.out.println("3.) Remove Product From Cart");
-                    System.out.println("4.) Update Product In Cart");
-                    System.out.println("5.) Purchase Products In Cart");
-                    System.out.println("4.) Review A Product");
-                    System.out.println("5.) Return A Product");
-                    System.out.println("6.) Link Wallet");
-                    System.out.println("7.) Update Wallet");
-                    System.out.println("-----------------------------------------------");
+                        break;
+                    case "return a product":
 
-                    q = scan.next();
+                        break;
+                    case "link wallet":
 
-                    switch (q.strip().toLowerCase()) {
-                        case "list products":
+                        break;
+                    case "update wallet":
 
-                            break;
-                        case "add product to cart":
+                        break;
+                    default:
+                        break;
+                }
 
-                            break;
-                        case "remove product from cart":
+            } else if (q.equals("seller")) {
 
-                            break;
-                        case "update product in cart":
+                System.out.println("---------------Seller Menu-------------------");
+                System.out.println("Choose type of user: ");
+                System.out.println("1.) Add Product");
+                System.out.println("2.) Remove Product");
+                System.out.println("3.) Update Product");
+                System.out.println("4.) Link Wallet");
+                System.out.println("5.) Update Wallet");
+                ch = scan.nextLine().strip().toLowerCase();
+                System.out.println("---------------------------------------------");
 
-                            break;
-                        case "purchase products in cart":
+                switch (ch.strip().toLowerCase()) {
+                    case "add product":
 
-                            break;
-                        case "review a product":
+                        break;
+                    case "remove product":
 
-                            break;
-                        case "return a product":
+                        break;
+                    case "update product":
 
-                            break;
-                        case "link wallet":
+                        break;
+                    case "link wallet":
 
-                            break;
-                        case "update wallet":
+                        break;
+                    case "update wallet":
 
-                            break;
-                        default:
-                            break;
-                    }
+                        break;
+                    default:
+                        break;
+                }
 
-                    break;
-                case "seller":
-                    System.out.println("---------------Seller Menu-------------------");
-                    System.out.println("Choose type of user: ");
-                    System.out.println("1.) Add Product");
-                    System.out.println("2.) Remove Product");
-                    System.out.println("3.) Update Product");
-                    System.out.println("4.) Link Wallet");
-                    System.out.println("5.) Update Wallet");
-                    System.out.println("---------------------------------------------");
-
-                    q = scan.next();
-
-                    switch (q.strip().toLowerCase()) {
-                        case "add product":
-
-                            break;
-                        case "remove product":
-
-                            break;
-                        case "update product":
-
-                            break;
-                        case "link wallet":
-
-                            break;
-                        case "update wallet":
-
-                            break;
-                        default:
-                            break;
-                    }
-
-                    break;
-                default:
-                    System.out.println("Invalid choice");
-                    break;
+            } else {
+                System.out.println("Invalid choice");
             }
 
             System.out.println();
-            if (q.equals("quit")) {
-                System.exit(0);
-            }
         }
     }
 }

@@ -99,7 +99,8 @@ public class MyApp {
     }
 
     // Usecase (C) (IMT2021055)
-    public int walletActions(Customer customer, Seller seller, Wallet wallet, String choice, DAO_Factory dao_Factory) {
+    public Float walletActions(Customer customer, Seller seller, Wallet wallet, String choice,
+            DAO_Factory dao_Factory) {
         WalletDAO walletDAO = dao_Factory.getWalletDAO();
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
@@ -147,7 +148,7 @@ public class MyApp {
                 } catch (Exception ex) {
                     System.out.println("Transaction Failed: " + ex);
                     platformTransactionManager.rollback(ts);
-                    return (-1);
+                    return ((float) -1);
                 }
                 break;
             case "check":
@@ -155,10 +156,11 @@ public class MyApp {
                 w = walletDAO.getWalletById(w_query);
                 if (w == null) {
                     System.out.println("Wallet not found for given customer Id: " + customer.getId());
+                    return ((float) -1);
                 } else {
                     System.out.println("Current ballance: " + w.getMoney());
+                    return (w.getMoney());
                 }
-                break;
             case "update":
                 count = walletDAO.updateWallet(wallet);
                 if (count > 0) {
@@ -168,10 +170,10 @@ public class MyApp {
                 break;
             default:
                 System.out.println("Invalid choice for this operation.");
-                return (-1);// Error
+                return ((float) -1);// Error
         }
 
-        return (0);
+        return ((float) 0);
     }
 
     // Usecase (D) (IMT2021055)
@@ -231,9 +233,12 @@ public class MyApp {
         TransactionDefinition td = new DefaultTransactionDefinition();
         CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
         ProductDAO productDAO = dao_Factory.getProductDAO();
+        WalletDAO walletDAO = dao_Factory.getWalletDAO();
+        SellerDAO sellerDAO = dao_Factory.getSellerDAO();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
 
         try {
+            // ! TODO: check wallet id of customer and seller to be not null.
             // Check cart of customer.
             List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(customer);
 
@@ -257,35 +262,55 @@ public class MyApp {
             // Insert Transaction.
             for (CartItemDataResponse p : cartItemDataResponses) {
                 int count = 0;
-                sql = "INSERT INTO transaction(id, customerId, sellerId, productId, date, returnStatus) VALUES (?, ?, ?, ?, ?, ?);";
 
-                Product product = new Product();
-                product.setId(p.getProductId());
-                product.setPrice(p.getPrice());
-                product.setQuantityAvailable(
-                        productDAO.getProductById(product).getQuantityAvailable() - p.getQuantity());
+                Float currentBalance = walletActions(customer, null, null, "check", dao_Factory);
 
-                Date date = new Date(System.currentTimeMillis());
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                String formattedDate = formatter.format(date);
+                if (currentBalance >= p.getPrice()) {
+                    // Deduct money and delete from cart.
+                    Wallet updateWallet = new Wallet(customer.getWalletId(), null, null);
+                    updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
+                    updateWallet.setMoney(currentBalance - p.getPrice());
 
-                count = this.jdbcTemplate.update(sql, new_id, customer.getId(),
-                        productDAO.getProductById(product).getSellerId(),
-                        p.getProductId(), formattedDate, false);
+                    walletActions(customer, null, updateWallet, "update", dao_Factory);
 
-                if (count <= 0) {
-                    System.out.println("INSERT INTO TRANSACTION -- ERROR:\n productID: " + p.getProductId());
+                    Product product_q = new Product(p.getProductId(), null, null, 0, (float) 0.00, 0);
+                    Seller seller = productDAO.getSellerByProductId(product_q);
+                    seller = sellerDAO.getSellerById(seller);
+
+                    updateWallet.setId(seller.getWalletId());
+                    updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
+                    updateWallet.setMoney(currentBalance + p.getPrice());
+
+                    walletActions(null, seller, updateWallet, "update", dao_Factory);
+
+                    CartItem ci = new CartItem(customer.getId(), p.getProductId(), 0);
+                    cartItemDAO.deleteCartItem(ci);
+
+                    sql = "INSERT INTO transaction(id, customerId, sellerId, productId, date, returnStatus) VALUES (?, ?, ?, ?, ?, ?);";
+
+                    Product product = new Product();
+                    product.setId(p.getProductId());
+                    product.setPrice(p.getPrice());
+                    product.setQuantityAvailable(
+                            productDAO.getProductById(product).getQuantityAvailable() - p.getQuantity());
+
+                    Date date = new Date(System.currentTimeMillis());
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String formattedDate = formatter.format(date);
+
+                    count = this.jdbcTemplate.update(sql, new_id, customer.getId(),
+                            productDAO.getProductById(product).getSellerId(),
+                            p.getProductId(), formattedDate, false);
+
+                    if (count <= 0) {
+                        System.out.println("INSERT INTO TRANSACTION -- ERROR:\n productID: " + p.getProductId());
+                    }
+
+                    // Update quantity in products table.
+                    productDAO.updateProduct(product);
+                } else {
+                    System.out.println("Insufficient balance for product Id: " + p.getProductId());
                 }
-
-                // Update quantity in products table.
-                productDAO.updateProduct(product);
-
-                // Delete from cart.
-                CartItem ci = new CartItem(customer.getId(), p.getProductId(), 0);
-                cartItemDAO.deleteCartItem(ci);
-
-                // !TODO: Check and Deduct money.
-
             }
 
             platformTransactionManager.commit(ts);
@@ -414,6 +439,42 @@ public class MyApp {
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
             platformTransactionManager.rollback(ts);
+        }
+
+        return (0);
+    }
+
+    // Admin Actions.
+    public int adminActions(Customer customer, Seller seller, String choice, DAO_Factory dao_Factory) {
+        CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
+        SellerDAO sellerDAO = dao_Factory.getSellerDAO();
+        switch (choice.strip().toLowerCase()) {
+            case "add customer":
+                customerDAO.addCustomer(customer);
+                break;
+            case "add seller":
+                sellerDAO.addSeller(seller);
+                break;
+            case "remove customer":
+                customerDAO.deleteCustomer(customer);
+                break;
+            case "remove seller":
+                sellerDAO.deleteSeller(seller);
+                break;
+            case "list all customers":
+                List <Customer> customers = customerDAO.getAllCustomers();
+                for (Customer c : customers) {
+                    System.out.println(c);
+                }
+                break;
+            case "list all sellers":
+                List <Seller> sellers = sellerDAO.getAllSellers();
+                for (Seller s : sellers) {
+                    System.out.println(s);
+                }
+                break;
+            default:
+                break;
         }
 
         return (0);
