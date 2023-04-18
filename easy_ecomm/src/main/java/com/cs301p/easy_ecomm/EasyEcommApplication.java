@@ -50,16 +50,23 @@ public class EasyEcommApplication {
         switch (choice.strip().toLowerCase()) {
             case "add":
                 count = productDAO.addProduct(product);
-                System.out
-                        .println("New product from seller with Id: " + product.getSellerId() + " added successfully!");
+                if (count > 0) {
+                    System.out
+                            .println("New product from seller with Id: " + product.getSellerId()
+                                    + " added successfully!");
+                }
                 return (count);
             case "update":
                 count = productDAO.updateProduct(product);
-                System.out.println("Updated product with Id: " + product.getId());
+                if (count > 0) {
+                    System.out.println("Updated product with Id: " + product.getId());
+                }
                 return (count);
             case "remove":
                 count = productDAO.deleteProduct(product);
-                System.out.println("Removed product with Id: " + product.getId());
+                if (count > 0) {
+                    System.out.println("Removed product with Id: " + product.getId());
+                }
                 return (count);
             default:
                 System.out.println("Invalid choice for this operation.");
@@ -71,8 +78,53 @@ public class EasyEcommApplication {
 
     // Usecase (C)
 
-    // Usecase (D)
+    // Usecase (D) (IMT2021055)
+    public int cartItemActions(CartItem cartItem, String choice, DAO_Factory dao_Factory) {
+        CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
+        int count = -1;
+        switch (choice.strip().toLowerCase()) {
+            case "add":
+                count = cartItemDAO.addCartItem(cartItem);
+                if (count > 0) {
+                    System.out
+                            .println("New product with Id: " + cartItem.getProductId()
+                                    + " added to cart by customer with Id: " + cartItem.getCustomerId());
+                }
+                return (count);
+            case "update":
+                count = cartItemDAO.updateCartItem(cartItem);
+                if(count > 0){
+                    System.out.println("Updated product with Id: " + cartItem.getProductId()
+                        + " in cart by customer with Id: " + cartItem.getCustomerId());
+                }
+                return (count);
+            case "remove":
+                count = cartItemDAO.deleteCartItem(cartItem);
+                if(count > 0){
+                    System.out.println("Removed product with Id: " + cartItem.getProductId()
+                        + " from cart by customer with Id: " + cartItem.getCustomerId());
+                }
+                return (count);
+            case "list":
+                Customer c = new Customer();
+                c.setId(cartItem.getCustomerId());
+                List <CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
 
+                System.out.println("------------------------------------------------------------------------------------------");
+                System.out.println("Cart of customer with Id: " + c.getId());
+                for (CartItemDataResponse cartItemDataResponse : cartItemDataResponses) {
+                    System.out.println();
+                    System.out.println(cartItemDataResponse);                    
+                    System.out.println();
+                }
+                System.out.println("------------------------------------------------------------------------------------------");
+
+                return (cartItemDataResponses.size());
+            default:
+                System.out.println("Invalid choice for this operation.");
+                return (-1);// Error
+        }
+    }
 
     // Usecase (E) (IMT2021055)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {
