@@ -35,6 +35,7 @@ public class EasyEcommApplication {
         MyApp myApp = (MyApp) applicationContext.getBean(MyApp.class);
         AppMenu appMenu = new AppMenu();
 
+        // ! TODO: allow users to update one value, retain others.
         while (true) {
             String ch = null;
             System.out.println(
@@ -155,8 +156,18 @@ public class EasyEcommApplication {
                         product.setQuantityAvailable(scan.nextInt());
                         myApp.sellerActions(product, ch, dao_Factory);
                     } else if (ch.equals("link wallet")) {
+                        System.out.println("Enter credit card number to be associated with wallet:");
+                        walletS.setCredit_card_no(scan.next());
+                        System.out.println("Input initial balance:");
+                        walletS.setMoney(scan.nextFloat());
+                        myApp.walletActions(null, myApp.userSeller, walletS, ch, dao_Factory);
                     } else if (ch.equals("update wallet")) {
-
+                        System.out.println("Enter credit card number to be associated with wallet:");
+                        walletS.setCredit_card_no(scan.next());
+                        System.out.println("Input initial balance:");
+                        walletS.setMoney(scan.nextFloat());
+                        walletS.setId(myApp.userSeller.getWalletId());
+                        myApp.walletActions(null, myApp.userSeller, walletS, ch, dao_Factory);
                     } else if (ch.equals("logout")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;

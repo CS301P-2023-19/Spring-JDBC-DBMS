@@ -41,6 +41,10 @@ public class MyApp {
     private PlatformTransactionManager platformTransactionManager;
     private JdbcTemplate jdbcTemplate;
 
+    public Seller userSeller;
+    public Customer userCustomer;
+    public Admin userAdmin;
+
     public MyApp(PlatformTransactionManager platformTransactionManager, JdbcTemplate jdbcTemplate) {
         this.platformTransactionManager = platformTransactionManager;
         this.jdbcTemplate = jdbcTemplate;
@@ -111,13 +115,17 @@ public class MyApp {
         Wallet w = null;
 
         switch (choice.strip().toLowerCase()) {
-            case "link":
+            case "link wallet":
                 System.out.println();
                 System.out.println("Initiate multiple actions...");
                 TransactionDefinition td = new DefaultTransactionDefinition();
                 TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
                 try {
                     count = walletDAO.addWallet(wallet);
+                    if(!(count > 0)){
+                        System.out.println("Linking unsuccessful! Ensure that credit card number is not already in use!");
+                        return((float)-1);
+                    }
                     if (count > 0) {
                         // Generate new transactionId.
                         String sql = "SELECT * FROM wallet WHERE id=(SELECT MAX(id) FROM wallet);";
@@ -163,7 +171,7 @@ public class MyApp {
                     System.out.println("Current ballance: " + w.getMoney());
                     return (w.getMoney());
                 }
-            case "update":
+            case "update wallet":
                 count = walletDAO.updateWallet(wallet);
                 if (count > 0) {
                     System.out.println(
@@ -263,7 +271,10 @@ public class MyApp {
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
 
         try {
-            // ! TODO: check wallet id of customer and seller to be not null.
+            if (!(customer.getWalletId() > 0)) {
+                System.out.println("Customer must link a wallet before purchase!");
+                return (-1);
+            }
             // Check cart of customer.
             List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(customer);
 
@@ -296,23 +307,28 @@ public class MyApp {
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
                     updateWallet.setMoney(currentBalance - p.getPrice());
 
-                    walletActions(customer, null, updateWallet, "update", dao_Factory);
+                    walletActions(customer, null, updateWallet, "update wallet", dao_Factory);
 
                     Product product_q = new Product(p.getProductId(), null, null, 0, (float) 0.00, 0);
                     Seller seller = productDAO.getSellerByProductId(product_q);
+
+                    seller = sellerDAO.getSellerById(seller);
 
                     if (seller == null) {
                         System.out.println("Seller offering the product not found!");
                         return (-1);
                     }
 
-                    seller = sellerDAO.getSellerById(seller);
+                    if (!(seller.getWalletId() > 0)) {
+                        System.out.println("Wait! Seller does not have a linked wallet.");
+                        return (-1);
+                    }
 
                     updateWallet.setId(seller.getWalletId());
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
                     updateWallet.setMoney(currentBalance + p.getPrice());
 
-                    walletActions(null, seller, updateWallet, "update", dao_Factory);
+                    walletActions(null, seller, updateWallet, "update wallet", dao_Factory);
 
                     CartItem ci = new CartItem(customer.getId(), p.getProductId(), 0);
                     cartItemDAO.deleteCartItem(ci);
@@ -401,8 +417,7 @@ public class MyApp {
                     count = reviewDAO.addReview(review);
                     if (count > 0) {
                         System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
-                    }
-                    else{
+                    } else {
                         System.out.println("Unable to add review for specified product");
                     }
                     platformTransactionManager.commit(ts);
@@ -534,11 +549,14 @@ public class MyApp {
                 customer = customerDAO.getCustomerByEmail(customer);
 
                 if (customer == null) {
+                    userCustomer = null;
                     return (-1);
                 } else {
                     if (customer.getEmail().equals(email) && customer.getPassword().equals(password)) {
+                        userCustomer = customer;
                         return (0);
                     } else {
+                        userCustomer = null;
                         return (-1);
                     }
                 }
@@ -549,11 +567,14 @@ public class MyApp {
                 seller = sellerDAO.getSellerByEmail(seller);
 
                 if (seller == null) {
+                    userSeller = null;
                     return (-1);
                 } else {
                     if (seller.getEmail().equals(email) && seller.getPassword().equals(password)) {
+                        userSeller = seller;
                         return (0);
                     } else {
+                        userSeller = null;
                         return (-1);
                     }
                 }
@@ -564,16 +585,21 @@ public class MyApp {
                 AdminDAO adminDAO = dao_Factory.getAdminDAO();
                 admin = adminDAO.getAdminByName(admin);
                 if (admin == null) {
+                    userAdmin = null;
                     return (-1);
                 } else {
-                    ;
                     if (admin.getA_name().equals(email) && admin.getA_password().equals(password)) {
+                        userAdmin = admin;
                         return (0);
                     } else {
+                        userAdmin = null;
                         return (-1);
                     }
                 }
             default:
+                userAdmin = null;
+                userSeller = null;
+                userCustomer = null;
                 return (-1);
         }
     }
