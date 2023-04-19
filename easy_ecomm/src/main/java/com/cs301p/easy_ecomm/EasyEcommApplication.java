@@ -47,7 +47,7 @@ public class EasyEcommApplication {
             if (!isLoggedIn) {
                 q = appMenu.userMenu(scan);
 
-                if (q.equals("quit")) {
+                if (q.equals("quit") || q.equals("4")) {
                     scan.close();
                     System.exit(0);
                 }
@@ -60,10 +60,10 @@ public class EasyEcommApplication {
                 System.out.println("Login Successful!");
                 isLoggedIn = true;
 
-                if (q.equals("admin")) {
+                if (q.equals("admin") || q.equals("1")) {
                     ch = appMenu.adminMenu(scan);
 
-                    if (ch.equals("add customer")) {
+                    if (ch.equals("add customer") || ch.equals("1")) {
                         System.out.println(
                                 "Input name, email, password, phone and address as continuous space-seperated strings:");
                         System.out.print("=> ");
@@ -72,7 +72,7 @@ public class EasyEcommApplication {
                         customer.setPassword(scan.next());
                         customer.setPhone(scan.next());
                         customer.setAddress(scan.next());
-                    } else if (ch.equals("add seller")) {
+                    } else if (ch.equals("add seller") || ch.equals("2")) {
                         System.out.println(
                                 "Input name, email, password and phone as continuous space-seperated strings:");
                         System.out.print("=> ");
@@ -80,19 +80,19 @@ public class EasyEcommApplication {
                         seller.setEmail(scan.next());
                         seller.setPassword(scan.next());
                         seller.setPhone(scan.next());
-                    } else if (ch.equals("remove customer")) {
+                    } else if (ch.equals("remove customer") || ch.equals("3")) {
                         System.out.println("Input customer Id to remove:");
                         System.out.print("=> ");
                         customer.setId(scan.nextInt());
-                    } else if (ch.equals("remove seller")) {
+                    } else if (ch.equals("remove seller") || ch.equals("4")) {
                         System.out.println("Input seller Id to remove:");
                         System.out.print("=> ");
                         seller.setId(scan.nextInt());
-                    } else if (ch.equals("list all customers")) {
+                    } else if (ch.equals("list all customers")  || ch.equals("5")) {
                         System.out.println("List of all customers:");
-                    } else if (ch.equals("list all sellers")) {
+                    } else if (ch.equals("list all sellers") || ch.equals("6")) {
                         System.out.println("List of all sellers:");
-                    } else if (ch.equals("logout")) {
+                    } else if (ch.equals("logout") || ch.equals("7")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;
                     } else {
@@ -103,47 +103,47 @@ public class EasyEcommApplication {
                         myApp.adminActions(customer, seller, ch, dao_Factory);
                     }
 
-                } else if (q.equals("customer")) {
+                } else if (q.equals("customer") || q.equals("2")) {
                     ch = appMenu.customerMenu(scan);
 
-                    if (ch.equals("list products")) {
+                    if (ch.equals("list products") || ch.equals("1")) {
 
-                    } else if (ch.equals("add product to cart")) {
+                    } else if (ch.equals("add product to cart") || ch.equals("2")) {
 
-                    } else if (ch.equals("remove product from cart")) {
+                    } else if (ch.equals("remove product from cart") || ch.equals("3")) {
 
-                    } else if (ch.equals("update product in cart")) {
+                    } else if (ch.equals("update product in cart") || ch.equals("4")) {
 
-                    } else if (ch.equals("purchase products in cart")) {
+                    } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
 
-                    } else if (ch.equals("review a product")) {
+                    } else if (ch.equals("review a product") || ch.equals("6")) {
 
-                    } else if (ch.equals("return a product")) {
+                    } else if (ch.equals("return a product") || ch.equals("7")) {
 
-                    } else if (ch.equals("link wallet")) {
+                    } else if (ch.equals("link wallet") || ch.equals("8")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletC.setCredit_card_no(scan.next());
                         System.out.println("Input initial balance:");
                         walletC.setMoney(scan.nextFloat());
                         myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                    } else if (ch.equals("update wallet")) {
+                    } else if (ch.equals("update wallet") || ch.equals("9")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletC.setCredit_card_no(scan.next());
                         System.out.println("Input new balance:");
                         walletC.setMoney(scan.nextFloat());
                         myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                    } else if (ch.equals("logout")) {
+                    } else if (ch.equals("logout")  || ch.equals("10")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;
                     } else {
                         System.out.println("Invalid...........");
                     }
 
-                } else if (q.equals("seller")) {
+                } else if (q.equals("seller") || q.equals("3")) {
 
                     ch = appMenu.sellerMenu(scan);
 
-                    if (ch.equals("add product")) {
+                    if (ch.equals("add product") || ch.equals("1")) {
                         System.out.println(
                                 "Input type, name, sellerId, price and quantity as continuous space-seperated strings:");
                         product.setType(scan.next());
@@ -152,11 +152,11 @@ public class EasyEcommApplication {
                         product.setPrice(scan.nextFloat());
                         product.setQuantityAvailable(scan.nextInt());
                         myApp.sellerActions(product, ch, dao_Factory);
-                    } else if (ch.equals("remove product")) {
+                    } else if (ch.equals("remove product") || ch.equals("2")) {
                         System.out.println("Input product Id to remove:");
                         product.setId(scan.nextInt());
                         myApp.sellerActions(product, ch, dao_Factory);
-                    } else if (ch.equals("update product")) {
+                    } else if (ch.equals("update product") || ch.equals("3")) {
                         System.out.println("Input product Id to update:");
                         product.setId(scan.nextInt());
                         System.out.println("Input updated price:");
@@ -164,20 +164,20 @@ public class EasyEcommApplication {
                         System.out.println("Input updated quantity:");
                         product.setQuantityAvailable(scan.nextInt());
                         myApp.sellerActions(product, ch, dao_Factory);
-                    } else if (ch.equals("link wallet")) {
+                    } else if (ch.equals("link wallet") || ch.equals("4")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletS.setCredit_card_no(scan.next());
                         System.out.println("Input initial balance:");
                         walletS.setMoney(scan.nextFloat());
                         myApp.walletActions(null, myApp.userSeller, walletS, ch, dao_Factory);
-                    } else if (ch.equals("update wallet")) {
+                    } else if (ch.equals("update wallet") || ch.equals("5")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletS.setCredit_card_no(scan.next());
                         System.out.println("Input new balance:");
                         walletS.setMoney(scan.nextFloat());
                         walletS.setId(myApp.userSeller.getWalletId());
                         myApp.walletActions(null, myApp.userSeller, walletS, ch, dao_Factory);
-                    } else if (ch.equals("logout")) {
+                    } else if (ch.equals("logout") || ch.equals("6")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;
                     } else {
