@@ -135,9 +135,20 @@ public class EasyEcommApplication {
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem,"update", dao_Factory);
                     } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
+                        
 
                     } else if (ch.equals("review a product") || ch.equals("6")) {
-
+                        int stars;
+                        String content;
+                        customer.setId(myApp.userCustomer.getId());
+                        System.out.println("Please enter the productId to review:");
+                        product.setId(scan.nextInt());
+                        System.out.println("Please provide review stars for the product: (0-5)");
+                        stars=scan.nextInt();
+                        System.out.println("Enter the review description of the product:");
+                        scan.nextLine();
+                        content=scan.nextLine();
+                        myApp.reviewProduct(customer, product, stars, content, dao_Factory);
                     } else if (ch.equals("return a product") || ch.equals("7")) {
 
                     } else if (ch.equals("link wallet") || ch.equals("8")) {
