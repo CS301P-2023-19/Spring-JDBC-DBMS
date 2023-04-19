@@ -56,6 +56,7 @@ public class TransactionDAO {
 
         if(transactions.size() == 0){
             System.out.println("No transactions found!");
+            return(null);
         }
 
         return transactions;
@@ -66,6 +67,11 @@ public class TransactionDAO {
         String sql = "SELECT * FROM transaction WHERE customerId=" + transaction.getCustomerId() + " AND productId="
                 + transaction.getProductId() + " AND id=" + transaction.getId();
         List<Transaction> transactions = this.jdbcTemplate.query(sql, new TransactionMapper());
+
+        if(transactions.size() == 0){
+            System.out.println("No matching transactions found!");
+            return(-1);
+        }
 
         // Check 7-day return policy.
         LocalDate dateDB = transactions.get(0).getDate().toLocalDate();

@@ -125,9 +125,10 @@ public class MyApp {
                 TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
                 try {
                     count = walletDAO.addWallet(wallet);
-                    if(!(count > 0)){
-                        System.out.println("Linking unsuccessful! Ensure that credit card number is not already in use!");
-                        return((float)-1);
+                    if (!(count > 0)) {
+                        System.out
+                                .println("Linking unsuccessful! Ensure that credit card number is not already in use!");
+                        return ((float) -1);
                     }
                     if (count > 0) {
                         // Generate new transactionId.
@@ -197,7 +198,8 @@ public class MyApp {
         product.setId(cartItem.getProductId());
         int count = -1;
         switch (choice.strip().toLowerCase()) {
-            case "add":
+            case "add product to cart":
+            case "2":
                 product = productDAO.getProductById(product);
                 if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
                     count = cartItemDAO.addCartItem(cartItem);
@@ -214,7 +216,8 @@ public class MyApp {
                     System.out.println("Insufficient quantity of product with Id: " + product.getId() + " available.");
                     return (-1);
                 }
-            case "update":
+            case "update product in cart":
+            case "4":
                 product = productDAO.getProductById(product);
                 if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
                     count = cartItemDAO.updateCartItem(cartItem);
@@ -231,7 +234,8 @@ public class MyApp {
                 }
                 return (count);
 
-            case "remove":
+            case "remove product from cart":
+            case "3":
                 count = cartItemDAO.deleteCartItem(cartItem);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + cartItem.getProductId()
@@ -240,13 +244,14 @@ public class MyApp {
                     System.out.println("Could not remove product from cart, it may not be present.");
                 }
                 return (count);
-            case "list":
+            case "list cart items":
+            case "5":
                 Customer c = new Customer();
                 c.setId(cartItem.getCustomerId());
                 List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
-                if(cartItemDataResponses == null){
-                    System.out.println("Cart of customer with customer ID : "+ c.getId()+" is empty.");
-                    return -1 ;
+                if (cartItemDataResponses == null) {
+                    System.out.println("Cart of customer with customer ID : " + c.getId() + " is empty.");
+                    return -1;
                 }
 
                 System.out.println(
@@ -453,24 +458,41 @@ public class MyApp {
             // Check if customer has purchased the product.
             TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
             List<Transaction> transactions = transactionDAO.getTransactionsByCustomer(customer);
-            int count = 0;
+            int count = -1;
+            int cnt = 0;
 
             for (Transaction transaction : transactions) {
                 if (transaction.getProductId() == product.getId()) {
+                    cnt++;
                     // If yes, update transaction table, 7-day policy is checked internally.
-                    Transaction updated_transaction = new Transaction(transaction.getId(), transaction.getCustomerId(),
-                            transaction.getSellerId(), transaction.getSellerId(), transaction.getDate(), true);
-                    int ret = transactionDAO.updateTransaction(updated_transaction);
+                    if (!transaction.getReturnStatus()) {
+                        Transaction updated_transaction = new Transaction(transaction.getId(),
+                                transaction.getCustomerId(),
+                                transaction.getSellerId(), transaction.getSellerId(), transaction.getDate(), true);
+                        count = transactionDAO.updateTransaction(updated_transaction);
 
-                    if (ret > 0) {
-                        System.out.println("Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                        if (count > 0) {
+                            System.out.println(
+                                    "Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                        } else {
+                            platformTransactionManager.rollback(ts);
+                        }
                     }
-                    platformTransactionManager.commit(ts);
-                    return (count);
+                    else{
+                        System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: " + transaction.getDate() + " was returned earlier!");
+                    }
                 }
             }
+
+            if (cnt == 0) {
+                System.out.println("Can not return a product which hasn't been purchased!");
+                return (-1);
+            }
+
+            platformTransactionManager.commit(ts);
+            return (count);
         } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex);
+            System.out.println("Transaction Failed: " + ex.getMessage());
             platformTransactionManager.rollback(ts);
         }
 
@@ -510,6 +532,7 @@ public class MyApp {
         int count = -1;
         switch (choice.strip().toLowerCase()) {
             case "add customer":
+            case "1":
                 count = customerDAO.addCustomer(customer);
                 if (count > 0) {
                     System.out.println("Added customer with email: " + customer.getEmail());
@@ -519,21 +542,44 @@ public class MyApp {
                 }
                 break;
             case "add seller":
-                sellerDAO.addSeller(seller);
+            case "2":
+                count = sellerDAO.addSeller(seller);
+                if (count > 0) {
+                    System.out.println("Added seller with email: " + customer.getEmail());
+                } else {
+                    System.out.println(
+                            "Can not add seller, either a duplicate email is present or invalid data provided.");
+                }
                 break;
             case "remove customer":
-                customerDAO.deleteCustomer(customer);
+            case "3":
+                count = customerDAO.deleteCustomer(customer);
+                if (count > 0) {
+                    System.out.println("Removed customer with email: " + customer.getEmail());
+                } else {
+                    System.out.println(
+                            "Can not remove customer, no match found.");
+                }
                 break;
             case "remove seller":
-                sellerDAO.deleteSeller(seller);
+            case "4":
+                count = sellerDAO.deleteSeller(seller);
+                if (count > 0) {
+                    System.out.println("Removed seller with email: " + customer.getEmail());
+                } else {
+                    System.out.println(
+                            "Can not remove seller, no match found.");
+                }
                 break;
             case "list all customers":
+            case "5":
                 List<Customer> customers = customerDAO.getAllCustomers();
                 for (Customer c : customers) {
                     System.out.println(c);
                 }
                 break;
             case "list all sellers":
+            case "6":
                 List<Seller> sellers = sellerDAO.getAllSellers();
                 for (Seller s : sellers) {
                     System.out.println(s);

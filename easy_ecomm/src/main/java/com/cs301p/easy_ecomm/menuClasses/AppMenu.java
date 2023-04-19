@@ -49,7 +49,7 @@ public class AppMenu {
         System.out.println("5.) List All Customers");
         System.out.println("6.) List All Sellers");
         System.out.println("7.) Logout");
-        scan.nextLine();
+        // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
         System.out.println(
@@ -72,7 +72,7 @@ public class AppMenu {
         System.out.println("9.) Link Wallet");
         System.out.println("10.) Update Wallet");
         System.out.println("11.) Logout");
-        scan.nextLine();
+        // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
         System.out.println(
@@ -90,7 +90,7 @@ public class AppMenu {
         System.out.println("4.) Link Wallet");
         System.out.println("5.) Update Wallet");
         System.out.println("6.) Logout");
-        scan.nextLine();
+        // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
         System.out.println(
