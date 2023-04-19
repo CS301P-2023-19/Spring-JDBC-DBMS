@@ -117,21 +117,21 @@ public class EasyEcommApplication {
                         // Add sorting and filtering as well.
                     } else if (ch.equals("add product to cart") || ch.equals("2")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
-                        System.out.println("Please enter the productId to be added:");
+                        System.out.println("Enter the productId to be added:");
                         cartItem.setProductId(scan.nextInt());
-                        System.out.println("Please enter the quantity of the item to be added:");
+                        System.out.println("Enter the quantity of the item to be added:");
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem, "add", dao_Factory);
                     } else if (ch.equals("remove product from cart") || ch.equals("3")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
-                        System.out.println("Please enter the productId to be removed:");
+                        System.out.println("Enter the productId to be removed:");
                         cartItem.setProductId(scan.nextInt());
                         myApp.cartItemActions(cartItem,"remove", dao_Factory);
                     } else if (ch.equals("update product in cart") || ch.equals("4")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
-                        System.out.println("Please enter the productId to be updated:");
+                        System.out.println("Enter the productId to be updated:");
                         cartItem.setProductId(scan.nextInt());
-                        System.out.println("Please enter the quantity of the item to be changed:");
+                        System.out.println("Enter the quantity of the item to be changed:");
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem,"update", dao_Factory);
                     }else if(ch.equals("list cart items") || ch.equals("5")) {
@@ -144,17 +144,17 @@ public class EasyEcommApplication {
                         int stars;
                         String content;
                         customer.setId(myApp.userCustomer.getId());
-                        System.out.println("Please enter the productId to review:");
+                        System.out.println("Enter the productId to review:");
                         product.setId(scan.nextInt());
-                        System.out.println("Please provide review stars for the product: (0-5)");
+                        System.out.println("Enter number of stars for the product: (0-5)");
                         stars=scan.nextInt();
-                        System.out.println("Enter the review description of the product:");
+                        System.out.println("Enter review description:");
                         scan.nextLine();
                         content=scan.nextLine();
                         myApp.reviewProduct(customer, product, stars, content, dao_Factory);
                     } else if (ch.equals("return a product") || ch.equals("8")) {
                         customer.setId(myApp.userCustomer.getId());
-                        System.out.println("Please enter productID of item to be returned");
+                        System.out.println("Enter productID of item to be returned");
                         product.setId(scan.nextInt());
                         myApp.returnProduct(customer,product,dao_Factory);
                     } else if (ch.equals("link wallet") || ch.equals("9")) {
