@@ -11,3 +11,5 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 application.properties
 beans.xml
+.idea/
+.DS_Store
