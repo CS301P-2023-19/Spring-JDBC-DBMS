@@ -121,8 +121,17 @@ public class EasyEcommApplication {
                     } else if (ch.equals("return a product")) {
 
                     } else if (ch.equals("link wallet")) {
+                        System.out.println("Enter credit card number to be associated with wallet:");
+                        walletC.setCredit_card_no(scan.next());
+                        System.out.println("Input initial balance:");
+                        walletC.setMoney(scan.nextFloat());
+                        myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
                     } else if (ch.equals("update wallet")) {
-
+                        System.out.println("Enter credit card number to be associated with wallet:");
+                        walletC.setCredit_card_no(scan.next());
+                        System.out.println("Input new balance:");
+                        walletC.setMoney(scan.nextFloat());
+                        myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
                     } else if (ch.equals("logout")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;
@@ -164,7 +173,7 @@ public class EasyEcommApplication {
                     } else if (ch.equals("update wallet")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletS.setCredit_card_no(scan.next());
-                        System.out.println("Input initial balance:");
+                        System.out.println("Input new balance:");
                         walletS.setMoney(scan.nextFloat());
                         walletS.setId(myApp.userSeller.getWalletId());
                         myApp.walletActions(null, myApp.userSeller, walletS, ch, dao_Factory);
