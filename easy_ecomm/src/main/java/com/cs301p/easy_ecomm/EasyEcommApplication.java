@@ -112,7 +112,7 @@ public class EasyEcommApplication {
                 } else if (q.equals("customer") || q.equals("2")) {
                     ch = appMenu.customerMenu(scan);
 
-<<<<<<< HEAD
+
                     if (ch.equals("list products") || ch.equals("1")) {
 
                     } else if (ch.equals("add product to cart") || ch.equals("2")) {
@@ -122,7 +122,7 @@ public class EasyEcommApplication {
                     } else if (ch.equals("update product in cart") || ch.equals("4")) {
 
                     } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
-=======
+
                     if (ch.equals("list products")) {
                         myApp.listingActions(null, null, dao_Factory);
                         // Add sorting and filtering as well.
@@ -146,7 +146,6 @@ public class EasyEcommApplication {
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem,"update", dao_Factory);
                     } else if (ch.equals("purchase products in cart")) {
->>>>>>> 3ed73063dceb5ef28774b6470f9433d394547827
 
                     } else if (ch.equals("review a product") || ch.equals("6")) {
 
@@ -231,4 +230,5 @@ public class EasyEcommApplication {
                     "=====================================================================================================================================");
         }
     }
+}
 }
