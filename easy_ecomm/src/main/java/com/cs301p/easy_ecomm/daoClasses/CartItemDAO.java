@@ -76,7 +76,7 @@ public class CartItemDAO {
         String sql = "UPDATE cart_item SET quantity=? WHERE productId=? AND customerId=?;";
 
         try {
-            count = this.jdbcTemplate.update(sql, cartItem.getProductId(), cartItem.getCustomerId());
+            count = this.jdbcTemplate.update(sql, cartItem.getQuantity(), cartItem.getProductId(), cartItem.getCustomerId());
         } catch (Exception e) {
             return (-1);
         }

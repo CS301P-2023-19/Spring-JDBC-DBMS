@@ -112,40 +112,29 @@ public class EasyEcommApplication {
                 } else if (q.equals("customer") || q.equals("2")) {
                     ch = appMenu.customerMenu(scan);
 
-
                     if (ch.equals("list products") || ch.equals("1")) {
-
-                    } else if (ch.equals("add product to cart") || ch.equals("2")) {
-
-                    } else if (ch.equals("remove product from cart") || ch.equals("3")) {
-
-                    } else if (ch.equals("update product in cart") || ch.equals("4")) {
-
-                    } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
-
-                    if (ch.equals("list products")) {
                         myApp.listingActions(null, null, dao_Factory);
                         // Add sorting and filtering as well.
-                    } else if (ch.equals("add product to cart")) {
+                    } else if (ch.equals("add product to cart") || ch.equals("2")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
                         System.out.println("Please enter the productId to be added:");
                         cartItem.setProductId(scan.nextInt());
                         System.out.println("Please enter the quantity of the item to be added:");
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem, "add", dao_Factory);
-                    } else if (ch.equals("remove product from cart")) {
+                    } else if (ch.equals("remove product from cart") || ch.equals("3")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
                         System.out.println("Please enter the productId to be removed:");
                         cartItem.setProductId(scan.nextInt());
                         myApp.cartItemActions(cartItem,"remove", dao_Factory);
-                    } else if (ch.equals("update product in cart")) {
+                    } else if (ch.equals("update product in cart") || ch.equals("4")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
                         System.out.println("Please enter the productId to be updated:");
                         cartItem.setProductId(scan.nextInt());
                         System.out.println("Please enter the quantity of the item to be changed:");
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem,"update", dao_Factory);
-                    } else if (ch.equals("purchase products in cart")) {
+                    } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
 
                     } else if (ch.equals("review a product") || ch.equals("6")) {
 
@@ -230,5 +219,4 @@ public class EasyEcommApplication {
                     "=====================================================================================================================================");
         }
     }
-}
 }
