@@ -52,12 +52,20 @@ public class ReviewDAO {
         String sql = "SELECT * FROM review WHERE id=" + review.getId();
         List<Review> reviews = this.jdbcTemplate.query(sql, new ReviewMapper());
 
+        if (reviews.size() == 0) {
+            return (null);
+        }
+
         return reviews.get(0);
     }
 
     public Review getReviewByCustomerAndProduct(Customer customer, Product product) {
         String sql = "SELECT * FROM review WHERE customerId=" + customer.getId() + "AND productId=" + product.getId();
         List<Review> reviews = this.jdbcTemplate.query(sql, new ReviewMapper());
+
+        if (reviews.size() == 0) {
+            return (null);
+        }
 
         return reviews.get(0);
     }
@@ -66,12 +74,20 @@ public class ReviewDAO {
         String sql = "SELECT * FROM review WHERE customerId=" + customer.getId();
         List<Review> reviews = this.jdbcTemplate.query(sql, new ReviewMapper());
 
+        if (reviews.size() == 0) {
+            System.out.println("No matching results found.");
+        }
+
         return reviews;
     }
 
     public List<Review> getReviewsByProduct(Product product) {
         String sql = "SELECT * FROM review WHERE productId=" + product.getId();
         List<Review> reviews = this.jdbcTemplate.query(sql, new ReviewMapper());
+
+        if (reviews.size() == 0) {
+            System.out.println("No matching results found.");
+        }
 
         return reviews;
     }
@@ -80,7 +96,12 @@ public class ReviewDAO {
         int count = 0;
         String sql = "INSERT INTO review(customerId, productId, stars, content) VALUES (?, ?, ?, ?);";
 
-        count = this.jdbcTemplate.update(sql, review.getCustomerId(), review.getProductId(), review.getStars(), review.getContent());
+        try {
+            count = this.jdbcTemplate.update(sql, review.getCustomerId(), review.getProductId(), review.getStars(),
+                    review.getContent());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }
@@ -89,16 +110,24 @@ public class ReviewDAO {
         int count = 0;
         String sql = "UPDATE review SET stars=?, content=? WHERE reviewId=?;";
 
+        try {
         count = this.jdbcTemplate.update(sql, review.getStars(), review.getContent(), review.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }
 
-    public int deleteReview(Review review){
+    public int deleteReview(Review review) {
         int count = 0;
         String sql = "DELETE FROM review WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, review.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, review.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }

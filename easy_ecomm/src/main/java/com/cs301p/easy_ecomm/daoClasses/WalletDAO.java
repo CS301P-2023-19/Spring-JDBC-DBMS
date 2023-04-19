@@ -75,7 +75,11 @@ public class WalletDAO {
         int count = 0;
         String sql = "UPDATE wallet SET money=?, credit_card_no=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, wallet.getMoney(), wallet.getCredit_card_no(), wallet.getId());
+        try{
+            count = this.jdbcTemplate.update(sql, wallet.getMoney(), wallet.getCredit_card_no(), wallet.getId());
+        }catch (Exception ex){
+            return(-1);
+        }
 
         return (count);
     }
@@ -84,7 +88,11 @@ public class WalletDAO {
         int count = 0;
         String sql = "DELETE FROM wallet WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, wallet.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, wallet.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }

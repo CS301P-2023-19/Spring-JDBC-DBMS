@@ -181,28 +181,51 @@ public class MyApp {
     // Usecase (D) (IMT2021055)
     public int cartItemActions(CartItem cartItem, String choice, DAO_Factory dao_Factory) {
         CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
+        ProductDAO productDAO = dao_Factory.getProductDAO();
+        Product product = new Product();
+        product.setId(cartItem.getProductId());
+        product = productDAO.getProductById(product);
         int count = -1;
         switch (choice.strip().toLowerCase()) {
             case "add":
-                count = cartItemDAO.addCartItem(cartItem);
-                if (count > 0) {
-                    System.out
-                            .println("New product with Id: " + cartItem.getProductId()
-                                    + " added to cart by customer with Id: " + cartItem.getCustomerId());
+                if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
+                    count = cartItemDAO.addCartItem(cartItem);
+                    if (count > 0) {
+                        System.out
+                                .println("New product with Id: " + cartItem.getProductId()
+                                        + " added to cart by customer with Id: " + cartItem.getCustomerId());
+                        return (count);
+                    } else {
+                        System.out.println("Unable to add product to cart!");
+                        return (-1);
+                    }
+                } else {
+                    System.out.println("Insufficient quantity of product with Id: " + product.getId() + " available.");
+                    return (-1);
                 }
-                return (count);
             case "update":
-                count = cartItemDAO.updateCartItem(cartItem);
-                if (count > 0) {
-                    System.out.println("Updated product with Id: " + cartItem.getProductId()
-                            + " in cart by customer with Id: " + cartItem.getCustomerId());
+                if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
+                    count = cartItemDAO.updateCartItem(cartItem);
+                    if (count > 0) {
+                        System.out.println("Updated product with Id: " + cartItem.getProductId()
+                                + " in cart by customer with Id: " + cartItem.getCustomerId());
+                        return (count);
+                    } else {
+                        System.out.println("Unable to update cart for product with Id: " + product.getId());
+                    }
+                } else {
+                    System.out.println("Insufficient quantity of product with Id: " + product.getId() + " available.");
+                    return (-1);
                 }
                 return (count);
+
             case "remove":
                 count = cartItemDAO.deleteCartItem(cartItem);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + cartItem.getProductId()
                             + " from cart by customer with Id: " + cartItem.getCustomerId());
+                } else {
+                    System.out.println("Could not remove product from cart, it may not be present.");
                 }
                 return (count);
             case "list":
@@ -277,6 +300,12 @@ public class MyApp {
 
                     Product product_q = new Product(p.getProductId(), null, null, 0, (float) 0.00, 0);
                     Seller seller = productDAO.getSellerByProductId(product_q);
+
+                    if (seller == null) {
+                        System.out.println("Seller offering the product not found!");
+                        return (-1);
+                    }
+
                     seller = sellerDAO.getSellerById(seller);
 
                     updateWallet.setId(seller.getWalletId());
@@ -370,7 +399,12 @@ public class MyApp {
                     ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
                     Review review = new Review(0, customer.getId(), product.getId(), stars, content);
                     count = reviewDAO.addReview(review);
-                    System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
+                    if (count > 0) {
+                        System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
+                    }
+                    else{
+                        System.out.println("Unable to add review for specified product");
+                    }
                     platformTransactionManager.commit(ts);
                     return (count);
                 }
@@ -450,9 +484,16 @@ public class MyApp {
     public int adminActions(Customer customer, Seller seller, String choice, DAO_Factory dao_Factory) {
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
+        int count = -1;
         switch (choice.strip().toLowerCase()) {
             case "add customer":
-                customerDAO.addCustomer(customer);
+                count = customerDAO.addCustomer(customer);
+                if (count > 0) {
+                    System.out.println("Added customer with email: " + customer.getEmail());
+                } else {
+                    System.out.println(
+                            "Can not add customer, either a duplicate email is present or invalid data provided.");
+                }
                 break;
             case "add seller":
                 sellerDAO.addSeller(seller);

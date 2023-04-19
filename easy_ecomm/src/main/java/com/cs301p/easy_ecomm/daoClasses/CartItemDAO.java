@@ -51,6 +51,10 @@ public class CartItemDAO {
                 + customer.getId() + "AND c.productId = p.id";
         List<CartItemDataResponse> cartItems = this.jdbcTemplate.query(sql, new CartItemDataResponseMapper());
 
+        if (cartItems.size() == 0) {
+            return (null);
+        }
+
         return cartItems;
     }
 
@@ -58,9 +62,12 @@ public class CartItemDAO {
         int count = 0;
         String sql = "INSERT INTO cart_item (customerId, productId, quantity) VALUES (?, ?, ?)";
 
-        count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId(),
-                cartItem.getQuantity());
-
+        try {
+            count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId(),
+                    cartItem.getQuantity());
+        } catch (Exception e) {
+            return (-1);
+        }
         return (count);
     }
 
@@ -68,8 +75,11 @@ public class CartItemDAO {
         int count = 0;
         String sql = "UPDATE cart_item SET quantity=? WHERE productId=? AND customerId=?;";
 
-        count = this.jdbcTemplate.update(sql, cartItem.getProductId(), cartItem.getCustomerId());
-
+        try {
+            count = this.jdbcTemplate.update(sql, cartItem.getProductId(), cartItem.getCustomerId());
+        } catch (Exception e) {
+            return (-1);
+        }
         return (count);
     }
 
@@ -77,7 +87,11 @@ public class CartItemDAO {
         int count = 0;
         String sql = "DELETE FROM cart_item WHERE customerId=? AND productId=?;";
 
-        count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId());
+        try {
+            count = this.jdbcTemplate.update(sql, cartItem.getCustomerId(), cartItem.getProductId());
+        } catch (Exception e) {
+            return (-1);
+        }
 
         return (count);
     }

@@ -49,8 +49,13 @@ public class SellerDAO {
         int count = 0;
         String sql = "INSERT INTO seller(name, email, password, phone) VALUES (?, ?, ?, ?);";
 
-        count = this.jdbcTemplate.update(sql, seller.getName(), seller.getEmail(), seller.getPassword(),
-                seller.getPhone());
+        try {
+            count = this.jdbcTemplate.update(sql, seller.getName(), seller.getEmail(), seller.getPassword(),
+            seller.getPhone());    
+        } catch (Exception e) {
+            return(-1);
+        }
+        
 
         return (count);
     }
@@ -59,12 +64,20 @@ public class SellerDAO {
         String sql = "SELECT * FROM seller WHERE id=" + seller;
         List <Seller> sellers = this.jdbcTemplate.query(sql, new SellerMapper());
 
+        if(sellers.size() == 0){
+            return(null);
+        }
+
         return sellers.get(0);
     }
 
     public Seller getSellerByEmail(Seller seller) {
         String sql = "SELECT * FROM seller WHERE email='" + seller.getEmail() + "'";
         List<Seller> sellers = this.jdbcTemplate.query(sql, new SellerMapper());
+
+        if(sellers.size() == 0){
+            return(null);
+        }
 
         return sellers.get(0);
     }
@@ -73,6 +86,10 @@ public class SellerDAO {
         String sql = "SELECT * FROM seller;";
         List<Seller> sellers = this.jdbcTemplate.query(sql, new SellerMapper());
 
+        if(sellers.size() == 0){
+            System.out.println("No sellers found!");
+        }
+
         return sellers;
     }
 
@@ -80,7 +97,11 @@ public class SellerDAO {
         int count = 0;
         String sql = "UPDATE seller SET phone=?, email=?, walletId=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, seller.getPhone(), seller.getEmail(), seller.getWalletId(), seller.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, seller.getPhone(), seller.getEmail(), seller.getWalletId(), seller.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }
@@ -89,7 +110,11 @@ public class SellerDAO {
         int count = 0;
         String sql = "DELETE FROM seller WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, seller.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, seller.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }

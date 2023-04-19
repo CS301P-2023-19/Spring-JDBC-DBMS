@@ -6,12 +6,10 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
 
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.mappers.CustomerMapper;
 
-// @Component
 public class CustomerDAO {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
@@ -50,8 +48,12 @@ public class CustomerDAO {
         int count = 0;
         String sql = "INSERT INTO customer(name, email, password, phone, address) VALUES (?, ?, ?, ?, ?);";
 
-        count = this.jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getPassword(),
-                customer.getPhone(), customer.getAddress());
+        try {
+            count = this.jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getPassword(),
+                    customer.getPhone(), customer.getAddress());
+        } catch (Exception ex) {
+            return (-1);
+        }
 
         return (count);
     }
@@ -60,8 +62,8 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customer WHERE id=" + customer.getId();
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
 
-        if(customers.size() == 0){
-            return(null);
+        if (customers.size() == 0) {
+            return (null);
         }
 
         return customers.get(0);
@@ -71,8 +73,8 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customer WHERE email='" + customer.getEmail() + "'";
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
 
-        if(customers.size() == 0){
-            return(null);
+        if (customers.size() == 0) {
+            return (null);
         }
 
         return customers.get(0);
@@ -82,8 +84,8 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customer;";
         List<Customer> customers = this.jdbcTemplate.query(sql, new CustomerMapper());
 
-        if(customers.size() == 0){
-            return(null);
+        if (customers.size() == 0) {
+            System.out.println("No customers found!");
         }
 
         return customers;
@@ -93,16 +95,26 @@ public class CustomerDAO {
         int count = 0;
         String sql = "UPDATE customer SET phone=?, address=?, email=?, walletId=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, customer.getPhone(), customer.getAddress(), customer.getEmail(), customer.getWalletId(), customer.getId());
+        try {
+            count = this.jdbcTemplate.update(sql, customer.getPhone(), customer.getAddress(), customer.getEmail(),
+                    customer.getWalletId(), customer.getId());
+
+        } catch (Exception e) {
+            return (-1);
+        }
 
         return (count);
     }
 
-    public int deleteCustomer(Customer customer){
+    public int deleteCustomer(Customer customer) {
         int count = 0;
         String sql = "DELETE FROM customer WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, customer.getId());
+        try {
+            count = this.jdbcTemplate.update(sql, customer.getId());
+        } catch (Exception e) {
+            return (-1);
+        }
 
         return (count);
     }

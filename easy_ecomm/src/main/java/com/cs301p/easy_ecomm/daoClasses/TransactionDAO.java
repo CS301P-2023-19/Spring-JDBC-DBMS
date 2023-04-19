@@ -54,6 +54,10 @@ public class TransactionDAO {
         String sql = "SELECT * FROM transaction WHERE customerId=" + customer.getId();
         List<Transaction> transactions = this.jdbcTemplate.query(sql, new TransactionMapper());
 
+        if(transactions.size() == 0){
+            System.out.println("No transactions found!");
+        }
+
         return transactions;
     }
 

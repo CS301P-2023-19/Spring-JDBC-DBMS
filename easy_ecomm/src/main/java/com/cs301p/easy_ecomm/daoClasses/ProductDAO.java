@@ -58,9 +58,12 @@ public class ProductDAO {
         int count = 0;
         String sql = "INSERT INTO product(type, name, sellerId, price, quantityAvailable) VALUES (?, ?, ?, ?, ?);";
 
-        count = this.jdbcTemplate.update(sql, product.getType(), product.getName(), product.getSellerId(),
+        try{
+            count = this.jdbcTemplate.update(sql, product.getType(), product.getName(), product.getSellerId(),
                 product.getPrice(), product.getQuantityAvailable());
-
+        }catch (Exception ex){
+            return(-1);
+        }
         return (count);
     }
 
@@ -68,7 +71,11 @@ public class ProductDAO {
         int count = 0;
         String sql = "UPDATE product SET price=?, quantityAvailable=? WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, product.getPrice(), product.getQuantityAvailable(), product.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, product.getPrice(), product.getQuantityAvailable(), product.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }
@@ -77,14 +84,23 @@ public class ProductDAO {
         int count = 0;
         String sql = "DELETE FROM product WHERE id=?;";
 
-        count = this.jdbcTemplate.update(sql, product.getId());
+        try {            
+            count = this.jdbcTemplate.update(sql, product.getId());
+        } catch (Exception e) {
+            return(-1);
+        }
 
         return (count);
     }
 
+    // Only gives seller with valid Id, if exists.
     public Seller getSellerByProductId(Product product) {
         String sql = "SELECT sellerId from product where id=" + product.getId();
         List<Product> products = this.jdbcTemplate.query(sql, new ProductMapper());
+
+        if(products.size() == 0){
+            return(null);
+        }
 
         Seller s = new Seller();
         s.setId(products.get(0).getSellerId());
