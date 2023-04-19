@@ -540,6 +540,9 @@ public class MyApp {
 
     // Auth Actions
     public int authActions(String email, String password, String userType, DAO_Factory dao_Factory) {
+        userAdmin = null;
+        userCustomer = null;
+        userSeller = null;
 
         switch (userType) {
             case "customer":
