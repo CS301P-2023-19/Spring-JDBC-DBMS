@@ -150,7 +150,10 @@ public class EasyEcommApplication {
                         content=scan.nextLine();
                         myApp.reviewProduct(customer, product, stars, content, dao_Factory);
                     } else if (ch.equals("return a product") || ch.equals("7")) {
-
+                        customer.setId(myApp.userCustomer.getId());
+                        System.out.println("Please enter productID of item to be returned");
+                        product.setId(scan.nextInt());
+                        myApp.returnProduct(customer,product,dao_Factory);
                     } else if (ch.equals("link wallet") || ch.equals("8")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletC.setCredit_card_no(scan.next());
