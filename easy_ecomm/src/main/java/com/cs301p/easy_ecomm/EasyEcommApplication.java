@@ -107,7 +107,8 @@ public class EasyEcommApplication {
                     ch = appMenu.customerMenu(scan);
 
                     if (ch.equals("list products")) {
-
+                        myApp.listingActions(null, null, dao_Factory);
+                        // Add sorting and filtering as well.
                     } else if (ch.equals("add product to cart")) {
 
                     } else if (ch.equals("remove product from cart")) {
