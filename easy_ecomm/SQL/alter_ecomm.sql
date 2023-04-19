@@ -12,7 +12,7 @@ FOREIGN KEY (sellerId) REFERENCES seller(id) ON DELETE CASCADE;
 
 ALTER TABLE product
 ADD CONSTRAINT FK_ProductSeller
-FOREIGN KEY (sellerId) REFERENCES seller(id);
+FOREIGN KEY (sellerId) REFERENCES seller(id) ON DELETE CASCADE;
 
 ALTER TABLE transaction
 ADD CONSTRAINT FK_TransactionCustomer

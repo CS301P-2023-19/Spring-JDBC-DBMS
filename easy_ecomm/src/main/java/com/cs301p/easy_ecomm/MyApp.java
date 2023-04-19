@@ -517,7 +517,6 @@ public class MyApp {
                     }
                 }
             case "admin":
-                System.out.println("a1");
                 Admin admin = new Admin();
                 admin.setA_name(email);
                 admin.setA_password(password);
