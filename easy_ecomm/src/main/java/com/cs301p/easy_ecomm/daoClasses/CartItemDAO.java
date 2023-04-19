@@ -48,9 +48,8 @@ public class CartItemDAO {
     // Now, write query functions.
     public List<CartItemDataResponse> listCartItems(Customer customer) {
         String sql = "SELECT c.productId, p.name, p.price, c.quantity FROM cart_item c, product p WHERE c.customerId="
-                + customer.getId() + "AND c.productId = p.id";
+                + customer.getId() + " AND c.productId = p.id";
         List<CartItemDataResponse> cartItems = this.jdbcTemplate.query(sql, new CartItemDataResponseMapper());
-
         if (cartItems.size() == 0) {
             return (null);
         }

@@ -57,6 +57,7 @@ public class MyApp {
         int count = -1;
         switch (choice.strip().toLowerCase()) {
             case "add product":
+            case "1":
                 count = productDAO.addProduct(product);
                 if (count > 0) {
                     System.out
@@ -65,12 +66,14 @@ public class MyApp {
                 }
                 return (count);
             case "update product":
+            case "2":
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
                 }
                 return (count);
             case "remove product":
+            case "3":
                 count = productDAO.deleteProduct(product);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + product.getId());
@@ -192,10 +195,10 @@ public class MyApp {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         Product product = new Product();
         product.setId(cartItem.getProductId());
-        product = productDAO.getProductById(product);
         int count = -1;
         switch (choice.strip().toLowerCase()) {
             case "add":
+                product = productDAO.getProductById(product);
                 if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
                     count = cartItemDAO.addCartItem(cartItem);
                     if (count > 0) {
@@ -212,6 +215,7 @@ public class MyApp {
                     return (-1);
                 }
             case "update":
+                product = productDAO.getProductById(product);
                 if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
                     count = cartItemDAO.updateCartItem(cartItem);
                     if (count > 0) {
@@ -240,6 +244,10 @@ public class MyApp {
                 Customer c = new Customer();
                 c.setId(cartItem.getCustomerId());
                 List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
+                if(cartItemDataResponses == null){
+                    System.out.println("Cart of customer with customer ID : "+ c.getId()+" is empty.");
+                    return -1 ;
+                }
 
                 System.out.println(
                         "------------------------------------------------------------------------------------------");
@@ -546,6 +554,7 @@ public class MyApp {
 
         switch (userType) {
             case "customer":
+            case "2":
                 Customer customer = new Customer();
                 customer.setEmail(email);
                 CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
@@ -564,6 +573,7 @@ public class MyApp {
                     }
                 }
             case "seller":
+            case "3":
                 Seller seller = new Seller();
                 seller.setEmail(email);
                 SellerDAO sellerDAO = dao_Factory.getSellerDAO();
@@ -582,6 +592,7 @@ public class MyApp {
                     }
                 }
             case "admin":
+            case "1":
                 Admin admin = new Admin();
                 admin.setA_name(email);
                 admin.setA_password(password);

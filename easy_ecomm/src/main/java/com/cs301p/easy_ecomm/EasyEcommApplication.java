@@ -53,7 +53,7 @@ public class EasyEcommApplication {
                     scan.close();
                     System.exit(0);
                 }
-                if(q.equals("customer") || q.equals("seller") || q.equals("admin") || q.equals(("quit"))){
+                if(q.equals("customer") || q.equals("seller") || q.equals("admin") || q.equals("1") || q.equals("2") || q.equals("3")){
                     authParams = appMenu.loginMenu(scan);
                 }
             }
@@ -134,10 +134,13 @@ public class EasyEcommApplication {
                         System.out.println("Please enter the quantity of the item to be changed:");
                         cartItem.setQuantity(scan.nextInt());
                         myApp.cartItemActions(cartItem,"update", dao_Factory);
-                    } else if (ch.equals("purchase products in cart") || ch.equals("5")) {
+                    }else if(ch.equals("list cart items") || ch.equals("5")) {
+                        cartItem.setCustomerId(myApp.userCustomer.getId());
+                        myApp.cartItemActions(cartItem,"list", dao_Factory);
+                    }else if (ch.equals("purchase products in cart") || ch.equals("6")) {
                         
 
-                    } else if (ch.equals("review a product") || ch.equals("6")) {
+                    } else if (ch.equals("review a product") || ch.equals("7")) {
                         int stars;
                         String content;
                         customer.setId(myApp.userCustomer.getId());
@@ -149,24 +152,24 @@ public class EasyEcommApplication {
                         scan.nextLine();
                         content=scan.nextLine();
                         myApp.reviewProduct(customer, product, stars, content, dao_Factory);
-                    } else if (ch.equals("return a product") || ch.equals("7")) {
+                    } else if (ch.equals("return a product") || ch.equals("8")) {
                         customer.setId(myApp.userCustomer.getId());
                         System.out.println("Please enter productID of item to be returned");
                         product.setId(scan.nextInt());
                         myApp.returnProduct(customer,product,dao_Factory);
-                    } else if (ch.equals("link wallet") || ch.equals("8")) {
+                    } else if (ch.equals("link wallet") || ch.equals("9")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletC.setCredit_card_no(scan.next());
                         System.out.println("Input initial balance:");
                         walletC.setMoney(scan.nextFloat());
                         myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                    } else if (ch.equals("update wallet") || ch.equals("9")) {
+                    } else if (ch.equals("update wallet") || ch.equals("10")) {
                         System.out.println("Enter credit card number to be associated with wallet:");
                         walletC.setCredit_card_no(scan.next());
                         System.out.println("Input new balance:");
                         walletC.setMoney(scan.nextFloat());
                         myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                    } else if (ch.equals("logout")  || ch.equals("10")) {
+                    } else if (ch.equals("logout")  || ch.equals("11")) {
                         System.out.println("Logging out...");
                         isLoggedIn = false;
                     } else {
