@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Seller;
@@ -25,6 +26,7 @@ public class EasyEcommApplication {
         Wallet walletC = new Wallet(0, "CCN", (float) 0.00);
         Wallet walletS = new Wallet(0, "CCN", (float) 0.00);
         Product product = new Product(0, "type", "name", 0, (float) 0.00, 0);
+        CartItem cartItem = new CartItem(0,0,0);
 
         boolean isLoggedIn = false;
         List<String> authParams = null;
@@ -51,14 +53,18 @@ public class EasyEcommApplication {
                     scan.close();
                     System.exit(0);
                 }
-
-                authParams = appMenu.loginMenu(scan);
+                if(q.equals("customer") || q.equals("seller") || q.equals("admin") || q.equals(("quit"))){
+                    authParams = appMenu.loginMenu(scan);
+                }
             }
 
             int loginStatus = myApp.authActions(authParams.get(0), authParams.get(1), q, dao_Factory);
             if (loginStatus == 0) {
-                System.out.println("Login Successful!");
-                isLoggedIn = true;
+                
+                if(isLoggedIn==false){
+                    System.out.println("Login Successful!");
+                    isLoggedIn = true;
+                }
 
                 if (q.equals("admin")) {
                     ch = appMenu.adminMenu(scan);
@@ -110,11 +116,24 @@ public class EasyEcommApplication {
                         myApp.listingActions(null, null, dao_Factory);
                         // Add sorting and filtering as well.
                     } else if (ch.equals("add product to cart")) {
-
+                        cartItem.setCustomerId(myApp.userCustomer.getId());
+                        System.out.println("Please enter the productId to be added:");
+                        cartItem.setProductId(scan.nextInt());
+                        System.out.println("Please enter the quantity of the item to be added:");
+                        cartItem.setQuantity(scan.nextInt());
+                        myApp.cartItemActions(cartItem, "add", dao_Factory);
                     } else if (ch.equals("remove product from cart")) {
-
+                        cartItem.setCustomerId(myApp.userCustomer.getId());
+                        System.out.println("Please enter the productId to be removed:");
+                        cartItem.setProductId(scan.nextInt());
+                        myApp.cartItemActions(cartItem,"remove", dao_Factory);
                     } else if (ch.equals("update product in cart")) {
-
+                        cartItem.setCustomerId(myApp.userCustomer.getId());
+                        System.out.println("Please enter the productId to be updated:");
+                        cartItem.setProductId(scan.nextInt());
+                        System.out.println("Please enter the quantity of the item to be changed:");
+                        cartItem.setQuantity(scan.nextInt());
+                        myApp.cartItemActions(cartItem,"update", dao_Factory);
                     } else if (ch.equals("purchase products in cart")) {
 
                     } else if (ch.equals("review a product")) {
@@ -146,10 +165,10 @@ public class EasyEcommApplication {
 
                     if (ch.equals("add product")) {
                         System.out.println(
-                                "Input type, name, sellerId, price and quantity as continuous space-seperated strings:");
+                                "Input type, name, price and quantity as continuous space-seperated strings:");
                         product.setType(scan.next());
                         product.setName(scan.next());
-                        product.setSellerId(scan.nextInt());
+                        product.setSellerId(myApp.userSeller.getId());
                         product.setPrice(scan.nextFloat());
                         product.setQuantityAvailable(scan.nextInt());
                         myApp.sellerActions(product, ch, dao_Factory);
