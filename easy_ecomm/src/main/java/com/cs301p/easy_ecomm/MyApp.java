@@ -44,6 +44,7 @@ public class MyApp {
     public Seller userSeller;
     public Customer userCustomer;
     public Admin userAdmin;
+    public boolean isLoggedIn = false;
 
     public MyApp(PlatformTransactionManager platformTransactionManager, JdbcTemplate jdbcTemplate) {
         this.platformTransactionManager = platformTransactionManager;
@@ -608,6 +609,7 @@ public class MyApp {
         userAdmin = null;
         userCustomer = null;
         userSeller = null;
+        this.isLoggedIn = true;
 
         switch (userType) {
             case "customer":
@@ -623,6 +625,7 @@ public class MyApp {
                 } else {
                     if (customer.getEmail().equals(email) && customer.getPassword().equals(password)) {
                         userCustomer = customer;
+                        this.isLoggedIn = true;
                         return (0);
                     } else {
                         userCustomer = null;
@@ -642,6 +645,7 @@ public class MyApp {
                 } else {
                     if (seller.getEmail().equals(email) && seller.getPassword().equals(password)) {
                         userSeller = seller;
+                        this.isLoggedIn = true;
                         return (0);
                     } else {
                         userSeller = null;
@@ -661,6 +665,7 @@ public class MyApp {
                 } else {
                     if (admin.getA_name().equals(email) && admin.getA_password().equals(password)) {
                         userAdmin = admin;
+                        this.isLoggedIn = true;
                         return (0);
                     } else {
                         userAdmin = null;
@@ -668,6 +673,7 @@ public class MyApp {
                     }
                 }
             default:
+                this.isLoggedIn = false;
                 userAdmin = null;
                 userSeller = null;
                 userCustomer = null;
