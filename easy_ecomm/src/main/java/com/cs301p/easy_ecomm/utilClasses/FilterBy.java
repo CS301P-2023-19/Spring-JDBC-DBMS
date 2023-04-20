@@ -17,7 +17,7 @@ public class FilterBy {
         return this.isBetween;
     }
 
-    public void setAttr(Boolean isBetween) {
+    public void setIsBetween(Boolean isBetween) {
         this.isBetween = isBetween;
     }
 
