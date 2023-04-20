@@ -118,8 +118,8 @@ public class ProductDAO {
         List<Product> result = null;
         // Can do between x AND x.
         try {
-            if(filter_by==null && sort_by==null){
-                sql = "SELECT * FROM product";
+            if(filter_by==null){
+                sql = "SELECT * FROM product ORDER BY " + sort_by.getAttr() + " " + sort_by.getDirection();
                 result = this.jdbcTemplate.query(sql, new ProductMapper());
             }else if (filter_by.getIsBetween()) {
                 sql = "SELECT * FROM product WHERE " + filter_by.getAttr() + " BETWEEN " + filter_by.getL_val()
