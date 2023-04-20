@@ -2,7 +2,6 @@ package com.cs301p.easy_ecomm;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Filter;
 
 import com.cs301p.easy_ecomm.utilClasses.FilterBy;
 import com.cs301p.easy_ecomm.utilClasses.OrderBy;
@@ -30,10 +29,9 @@ public class EasyEcommApplication {
         Wallet walletS = new Wallet(0, "CCN", (float) 0.00);
         Product product = new Product(0, "type", "name", 0, (float) 0.00, 0);
         CartItem cartItem = new CartItem(0, 0, 0);
-        FilterBy filterBy = new FilterBy(false,"price","0","0");
-        OrderBy orderBy = new OrderBy("","");
+        FilterBy filterBy = new FilterBy(false, "price", "0", "0");
+        OrderBy orderBy = new OrderBy("", "");
 
-        
         List<String> authParams = null;
         String q = null;
 
@@ -126,58 +124,58 @@ public class EasyEcommApplication {
                         if (ch.equals("list products") || ch.equals("1")) {
                             System.out.println("Do you wish to filter the products (Yes/No)?");
                             String choice = scan.next();
-                            choice=choice.strip().toLowerCase();
-                            if(choice.equals("yes") || choice.equals("y")){
+                            choice = choice.strip().toLowerCase();
+                            if (choice.equals("yes") || choice.equals("y")) {
                                 System.out.println("Enter attribute to filter on(type/price)");
                                 String filterChoice = scan.next();
-                                filterChoice=filterChoice.strip().toLowerCase();
-                                if(filterChoice.equals("type")){
+                                filterChoice = filterChoice.strip().toLowerCase();
+                                if (filterChoice.equals("type")) {
                                     String type;
                                     System.out.println("Enter the type:");
-                                    type=scan.next();
+                                    type = scan.next();
                                     filterBy.setIsBetween(false);
                                     filterBy.setAttr("type");
                                     filterBy.setL_val(type);
-                                }else if(filterChoice.equals("price")){
-                                    String lowerLimit,higherLimit;
+                                } else if (filterChoice.equals("price")) {
+                                    String lowerLimit, higherLimit;
                                     System.out.println("Enter the lower limit");
-                                    lowerLimit=scan.next();
+                                    lowerLimit = scan.next();
                                     System.out.println("Enter the higher limit");
-                                    higherLimit=scan.next();
+                                    higherLimit = scan.next();
                                     filterBy.setIsBetween(true);
                                     filterBy.setAttr("price");
                                     filterBy.setL_val(lowerLimit);
                                     filterBy.setH_val(higherLimit);
-                                }else{
+                                } else {
                                     System.out.println("Invalid attribute");
+                                    filterBy = null;
                                 }
-                            }else if(choice.equals("no") || choice.equals("n")){
-                                filterBy.setIsBetween(false);
-                                filterBy=null;
-                            }else{
+                            } else if (choice.equals("no") || choice.equals("n")) {
+                                filterBy = null;
+                            } else {
                                 System.out.println("Invalid choice, assuming no.");
-                                filterBy=null;
+                                filterBy = null;
                             }
 
                             System.out.println("Do you wish to sort the products (Yes/No)?");
                             choice = scan.next();
-                            choice=choice.strip().toLowerCase();
-                            if(choice.equals("yes") || choice.equals("y")){
+                            choice = choice.strip().toLowerCase();
+                            if (choice.equals("yes") || choice.equals("y")) {
                                 System.out.println("Enter attribute to sort on(quantity/price)");
                                 String sortChoice = scan.next();
-                                sortChoice=sortChoice.strip().toLowerCase();
-                                if(sortChoice=="quantity"){
+                                sortChoice = sortChoice.strip().toLowerCase();
+                                if (sortChoice == "quantity") {
                                     orderBy.setAttr("quantity");
-                                }else if(sortChoice=="price"){
+                                } else if (sortChoice == "price") {
                                     orderBy.setAttr("price");
                                 }
                                 System.out.println("Direction (asc/desc):");
-                                String direction= scan.next();
+                                String direction = scan.next();
                                 orderBy.setDirection(direction);
-                            }else if(choice.equals("no") || choice.equals("n")){
+                            } else if (choice.equals("no") || choice.equals("n")) {
                                 orderBy.setAttr("id");
                                 orderBy.setDirection("asc");
-                            }else{
+                            } else {
                                 System.out.println("Invalid choice, assuming no.");
                                 orderBy.setAttr("id");
                                 orderBy.setDirection("asc");
@@ -310,7 +308,7 @@ public class EasyEcommApplication {
                     "=====================================================================================================================================");
             System.out.println(
                     "=====================================================================================================================================");
-            System.out.println("Press enter to continue");        
+            System.out.println("Press enter to continue");
             scan.nextLine();
         }
 
