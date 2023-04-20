@@ -31,6 +31,7 @@ public class EasyEcommApplication {
         CartItem cartItem = new CartItem(0, 0, 0);
         FilterBy filterBy = new FilterBy(false, "price", "0", "0");
         OrderBy orderBy = new OrderBy("", "");
+        FilterBy filterByBlank = new FilterBy(true, "id", "0", "1000000");
 
         List<String> authParams = null;
         String q = null;
@@ -122,6 +123,7 @@ public class EasyEcommApplication {
                     ch = appMenu.customerMenu(scan);
                     try {
                         if (ch.equals("list products") || ch.equals("1")) {
+                            filterBy = filterByBlank;
                             System.out.println("Do you wish to filter the products (Yes/No)?");
                             String choice = scan.next();
                             choice = choice.strip().toLowerCase();
@@ -142,6 +144,7 @@ public class EasyEcommApplication {
                                     lowerLimit = scan.next();
                                     System.out.println("Enter the higher limit");
                                     higherLimit = scan.next();
+                                    System.out.println(higherLimit + "    " + lowerLimit);
                                     filterBy.setIsBetween(true);
                                     filterBy.setAttr("price");
                                     filterBy.setL_val(lowerLimit);
@@ -255,6 +258,7 @@ public class EasyEcommApplication {
                         }
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity of data...");
+                        System.out.println(e.getMessage());
                     }
 
                 } else if (q.equals("seller") || q.equals("3")) {
