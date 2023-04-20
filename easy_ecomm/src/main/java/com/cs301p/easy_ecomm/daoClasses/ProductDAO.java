@@ -51,6 +51,11 @@ public class ProductDAO {
         String sql = "SELECT * FROM product WHERE id=" + product.getId();
         List<Product> products = this.jdbcTemplate.query(sql, new ProductMapper());
 
+        if(products.size() == 0){
+            System.out.println("Could not find product with Id: " + product.getId());
+            return(null);
+        }
+
         return products.get(0);
     }
 

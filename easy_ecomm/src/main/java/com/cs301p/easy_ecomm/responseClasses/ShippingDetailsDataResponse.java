@@ -5,16 +5,18 @@ public class ShippingDetailsDataResponse {
     private int productId;
     private String customerName;
     private String customerAddress;
+    private String phone;
 
 
     public ShippingDetailsDataResponse() {
     }
 
-    public ShippingDetailsDataResponse(int transactionId, int productId, String customerName, String customerAddress) {
+    public ShippingDetailsDataResponse(int transactionId, int productId, String customerName, String customerAddress, String phone) {
         this.transactionId = transactionId;
         this.productId = productId;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
+        this.phone = phone;
     }
 
     public int getTransactionId() {
@@ -49,6 +51,14 @@ public class ShippingDetailsDataResponse {
         this.customerAddress = customerAddress;
     }
 
+    public String getPhone() {
+        return(this.phone);
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -56,6 +66,7 @@ public class ShippingDetailsDataResponse {
             ",\n productId='" + getProductId() + "'" +
             ",\n customerName='" + getCustomerName() + "'" +
             ",\n customerAddress='" + getCustomerAddress() + "'" +
+            ",\n phone='" + getPhone() + "'" +
             "\n}";
     }
 }

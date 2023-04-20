@@ -14,7 +14,8 @@ public class ShippingDetailsDataResponseMapper implements RowMapper <ShippingDet
         sd.setTransactionId(rs.getInt("id"));        
         sd.setProductId(rs.getInt("productId"));        
         sd.setCustomerName(rs.getString("name"));        
-        sd.setCustomerAddress(rs.getString("address"));        
+        sd.setCustomerAddress(rs.getString("address"));  
+        sd.setPhone(rs.getString("phone"));      
 
         return sd;
     }

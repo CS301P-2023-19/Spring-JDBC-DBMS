@@ -201,39 +201,45 @@ public class MyApp {
             case "add product to cart":
             case "2":
                 product = productDAO.getProductById(product);
-                if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
-                    count = cartItemDAO.addCartItem(cartItem);
-                    if (count > 0) {
-                        System.out
-                                .println("New product with Id: " + cartItem.getProductId()
-                                        + " added to cart by customer with Id: " + cartItem.getCustomerId());
-                        return (count);
+                if (product != null) {
+                    if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
+                        count = cartItemDAO.addCartItem(cartItem);
+                        if (count > 0) {
+                            System.out
+                                    .println("New product with Id: " + cartItem.getProductId()
+                                            + " added to cart by customer with Id: " + cartItem.getCustomerId());
+                            return (count);
+                        } else {
+                            System.out.println("Unable to add product to cart!");
+                            return (-1);
+                        }
                     } else {
-                        System.out.println("Unable to add product to cart!");
+                        System.out.println(
+                                "Insufficient quantity of product with Id: " + product.getId() + " available.");
                         return (-1);
                     }
-                } else {
-                    System.out.println("Insufficient quantity of product with Id: " + product.getId() + " available.");
-                    return (-1);
                 }
             case "update product in cart":
             case "4":
                 product = productDAO.getProductById(product);
-                if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
-                    count = cartItemDAO.updateCartItem(cartItem);
-                    if (count > 0) {
-                        System.out.println("Updated product with Id: " + cartItem.getProductId()
-                                + " in cart by customer with Id: " + cartItem.getCustomerId());
-                        return (count);
+                if (product != null) {
+                    if (product.getQuantityAvailable() >= cartItem.getQuantity()) {
+                        count = cartItemDAO.updateCartItem(cartItem);
+                        if (count > 0) {
+                            System.out.println("Updated product with Id: " + cartItem.getProductId()
+                                    + " in cart by customer with Id: " + cartItem.getCustomerId());
+                            return (count);
+                        } else {
+                            System.out.println("Unable to update cart for product with Id: " + product.getId()
+                                    + ", ensure that the product is present in cart and correct data is provided.");
+                        }
                     } else {
-                        System.out.println("Unable to update cart for product with Id: " + product.getId());
+                        System.out.println(
+                                "Insufficient quantity of product with Id: " + product.getId() + " available.");
+                        return (-1);
                     }
-                } else {
-                    System.out.println("Insufficient quantity of product with Id: " + product.getId() + " available.");
-                    return (-1);
+                    return (count);
                 }
-                return (count);
-
             case "remove product from cart":
             case "3":
                 count = cartItemDAO.deleteCartItem(cartItem);
@@ -251,7 +257,7 @@ public class MyApp {
                 List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(c);
                 if (cartItemDataResponses == null) {
                     System.out.println("Cart of customer with customer ID : " + c.getId() + " is empty.");
-                    return -1;
+                    return (-1);
                 }
 
                 System.out.println(
@@ -433,11 +439,10 @@ public class MyApp {
                     } else {
                         System.out.println("Unable to add review for specified product");
                     }
-                    platformTransactionManager.commit(ts);
-                    return (count);
                 }
             }
-
+            platformTransactionManager.commit(ts);
+            return (count);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
             platformTransactionManager.rollback(ts);
@@ -464,7 +469,7 @@ public class MyApp {
             for (Transaction transaction : transactions) {
                 if (transaction.getProductId() == product.getId()) {
                     cnt++;
-                    // If yes, update transaction table, 7-day policy is checked internally.
+                    // If yes, update transaction table, 7-day policy is checked internally, check if already returned.
                     if (!transaction.getReturnStatus()) {
                         Transaction updated_transaction = new Transaction(transaction.getId(),
                                 transaction.getCustomerId(),
@@ -477,9 +482,9 @@ public class MyApp {
                         } else {
                             platformTransactionManager.rollback(ts);
                         }
-                    }
-                    else{
-                        System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: " + transaction.getDate() + " was returned earlier!");
+                    } else {
+                        System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: "
+                                + transaction.getDate() + " was returned earlier!");
                     }
                 }
             }
@@ -508,14 +513,20 @@ public class MyApp {
         String sql;
 
         try {
-            sql = "SELECT t.id, t.productId, c.name, c.address FROM transaction as t, customer as c WHERE t.customerId=c.id AND t.id="
+            sql = "SELECT t.id, t.productId, c.name, c.address, c.phone FROM transaction as t, customer as c WHERE t.customerId=c.id AND t.id="
                     + transaction.getId();
             List<ShippingDetailsDataResponse> shippingDetailsDataResponses = this.jdbcTemplate.query(sql,
                     new ShippingDetailsDataResponseMapper());
 
+            if(shippingDetailsDataResponses.size() == 0){
+                System.out.println("No matching records found!");
+            }
+
             String res = shippingDetailsDataResponses.get(0).getCustomerAddress();
+            String ph = shippingDetailsDataResponses.get(0).getPhone();
+            String custName = shippingDetailsDataResponses.get(0).getCustomerName();
             System.out
-                    .println("Customer who made the transaction with Id: " + transaction.getId() + " lived at: " + res);
+                    .println("Customer, " + custName + "who made the transaction with Id: " + transaction.getId() + " lived at: " + res + ", phone: " + ph);
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
