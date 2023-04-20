@@ -298,13 +298,21 @@ public class MyApp {
             // Check cart of customer.
             List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(customer);
 
+            if (cartItemDataResponses.size() == 0) {
+                System.out.println("Your cart is empty!");
+                return (-2);
+            }
+
             // Check Quantity.
             for (CartItemDataResponse p : cartItemDataResponses) {
                 Product product = new Product();
                 product.setId(p.getProductId());
+                int availableQuant = productDAO.getProductById(product).getQuantityAvailable();
 
                 // Handle Insufficient Quantity.
-                if (p.getQuantity() > productDAO.getProductById(product).getQuantityAvailable()) {
+                if (p.getQuantity() > availableQuant) {
+                    System.out.println("Insufficient quantity for productId: " + p.getProductId() + ", "
+                            + availableQuant + " units are available.");
                     return (product.getId());
                 }
             }
@@ -312,8 +320,13 @@ public class MyApp {
             // Generate new transactionId.
             String sql = "SELECT * FROM transaction WHERE id=(SELECT MAX(id) FROM transaction);";
             List<Transaction> transactions = this.jdbcTemplate.query(sql, new TransactionMapper());
+            int new_id = -1;
 
-            int new_id = transactions.get(0).getId() + 1;
+            if (transactions.size() == 0) {
+                new_id = 1;
+            } else {
+                new_id = transactions.get(0).getId() + 1;
+            }
 
             // Insert Transaction.
             for (CartItemDataResponse p : cartItemDataResponses) {
@@ -341,7 +354,7 @@ public class MyApp {
 
                     if (!(seller.getWalletId() > 0)) {
                         System.out.println("Wait! Seller does not have a linked wallet.");
-                        return (-1);
+                        return (p.getProductId());
                     }
 
                     updateWallet.setId(seller.getWalletId());
@@ -470,7 +483,8 @@ public class MyApp {
             for (Transaction transaction : transactions) {
                 if (transaction.getProductId() == product.getId()) {
                     cnt++;
-                    // If yes, update transaction table, 7-day policy is checked internally, check if already returned.
+                    // If yes, update transaction table, 7-day policy is checked internally, check
+                    // if already returned.
                     if (!transaction.getReturnStatus()) {
                         Transaction updated_transaction = new Transaction(transaction.getId(),
                                 transaction.getCustomerId(),
@@ -519,7 +533,7 @@ public class MyApp {
             List<ShippingDetailsDataResponse> shippingDetailsDataResponses = this.jdbcTemplate.query(sql,
                     new ShippingDetailsDataResponseMapper());
 
-            if(shippingDetailsDataResponses.size() == 0){
+            if (shippingDetailsDataResponses.size() == 0) {
                 System.out.println("No matching records found!");
             }
 
@@ -527,7 +541,8 @@ public class MyApp {
             String ph = shippingDetailsDataResponses.get(0).getPhone();
             String custName = shippingDetailsDataResponses.get(0).getCustomerName();
             System.out
-                    .println("Customer, " + custName + "who made the transaction with Id: " + transaction.getId() + " lived at: " + res + ", phone: " + ph);
+                    .println("Customer, " + custName + "who made the transaction with Id: " + transaction.getId()
+                            + " lived at: " + res + ", phone: " + ph);
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);

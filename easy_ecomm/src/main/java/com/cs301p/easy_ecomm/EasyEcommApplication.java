@@ -206,6 +206,16 @@ public class EasyEcommApplication {
                             cartItem.setCustomerId(myApp.userCustomer.getId());
                             myApp.cartItemActions(cartItem, ch, dao_Factory);
                         } else if (ch.equals("purchase products in cart") || ch.equals("6")) {
+                            int ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
+
+                            while (ret != 0) {
+                                System.out
+                                        .println("Should product with Id: " + ret + " be discarded from cart(yes/no)");
+                                String updateCart = scan.next().strip().toLowerCase();
+                                myApp.handleInsufficientQuantity(myApp.userCustomer, product, updateCart,
+                                        dao_Factory);
+                                ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
+                            }
 
                         } else if (ch.equals("review a product") || ch.equals("7")) {
                             int stars;
