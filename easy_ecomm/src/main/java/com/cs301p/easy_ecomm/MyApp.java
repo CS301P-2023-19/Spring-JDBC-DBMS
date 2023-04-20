@@ -39,6 +39,8 @@ import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
 import com.cs301p.easy_ecomm.utilClasses.FilterBy;
 import com.cs301p.easy_ecomm.utilClasses.OrderBy;
 
+import de.vandermeer.asciitable.AsciiTable;
+
 public class MyApp {
     private PlatformTransactionManager platformTransactionManager;
     private JdbcTemplate jdbcTemplate;
@@ -47,6 +49,7 @@ public class MyApp {
     public Customer userCustomer;
     public Admin userAdmin;
     public boolean isLoggedIn = false;
+    private AsciiTable asciiTable = null;
 
     public MyApp(PlatformTransactionManager platformTransactionManager, JdbcTemplate jdbcTemplate) {
         this.platformTransactionManager = platformTransactionManager;
@@ -100,10 +103,19 @@ public class MyApp {
 
         System.out.println(
                 "-----------------------------------------------Requested products are:--------------------------------------------");
+        this.asciiTable = new AsciiTable();
+        this.asciiTable.addRule();
+        this.asciiTable.addRow("id", "type", "name", "sellerId", "price", "quantityAvailable");
+        this.asciiTable.addRule();
         for (Product product : products) {
-            System.out.println(product);
-            System.out.println();
+            // System.out.println(product);
+            this.asciiTable.addRow(product.getId(), product.getType(), product.getName(), product.getSellerId(),
+                    product.getPrice(), product.getQuantityAvailable());
+            this.asciiTable.addRule();
         }
+        String output = this.asciiTable.render(120);
+        System.out.println(output);
+        this.asciiTable = null;
         System.out.println(
                 "------------------------------------------------------------------------------------------------------------------");
 
@@ -170,7 +182,12 @@ public class MyApp {
                 }
                 break;
             case "check":
-                w_query = new Wallet(customer.getWalletId(), "-", null);
+                w_query = new Wallet(-1, null, null);
+                if (customer != null) {
+                    w_query = new Wallet(customer.getWalletId(), "-", null);
+                } else if (seller != null) {
+                    w_query = new Wallet(seller.getWalletId(), "-", null);
+                }
                 w = walletDAO.getWalletById(w_query);
                 if (w == null) {
                     System.out.println("Wallet not found for given customer Id: " + customer.getId());
@@ -183,7 +200,7 @@ public class MyApp {
             case "10":
                 if (customer != null) {
                     wallet.setId(customer.getWalletId());
-                } else if(seller != null) {
+                } else if (seller != null) {
                     wallet.setId(seller.getWalletId());
                 }
                 count = walletDAO.updateWallet(wallet);
@@ -273,11 +290,21 @@ public class MyApp {
                 System.out.println(
                         "------------------------------------------------------------------------------------------");
                 System.out.println("Cart of customer with Id: " + c.getId());
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("productId", "name", "price", "quantity");
+                this.asciiTable.addRule();
                 for (CartItemDataResponse cartItemDataResponse : cartItemDataResponses) {
-                    System.out.println();
-                    System.out.println(cartItemDataResponse);
-                    System.out.println();
+                    // System.out.println();
+                    // System.out.println(cartItemDataResponse);
+                    // System.out.println();
+                    this.asciiTable.addRow(cartItemDataResponse.getProductId(), cartItemDataResponse.getName(),
+                            cartItemDataResponse.getPrice(), cartItemDataResponse.getQuantity());
+                    this.asciiTable.addRule();
                 }
+                String output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 System.out.println(
                         "------------------------------------------------------------------------------------------");
 
@@ -372,9 +399,10 @@ public class MyApp {
                         return (p.getProductId());
                     }
 
+                    currentBalance = walletActions(null, seller, null, "check", dao_Factory);
                     updateWallet.setId(seller.getWalletId());
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
-                    updateWallet.setMoney(updateWallet.getMoney() + p.getPrice() * p.getQuantity());
+                    updateWallet.setMoney(currentBalance + p.getPrice() * p.getQuantity());
 
                     walletActions(null, seller, updateWallet, "update wallet", dao_Factory);
 
@@ -587,6 +615,7 @@ public class MyApp {
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
         int count = -1;
+        String output = "";
         switch (choice.strip().toLowerCase()) {
             case "add customer":
             case "1":
@@ -631,16 +660,35 @@ public class MyApp {
             case "list all customers":
             case "5":
                 List<Customer> customers = customerDAO.getAllCustomers();
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "name", "email", "address", "phone", "walletId");
+                this.asciiTable.addRule();
                 for (Customer c : customers) {
-                    System.out.println(c);
+                    // System.out.println(c);
+                    this.asciiTable.addRow(c.getId(), c.getName(), c.getEmail(), c.getAddress(), c.getPhone(),
+                            c.getWalletId());
+                    this.asciiTable.addRule();
                 }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 break;
             case "list all sellers":
             case "6":
                 List<Seller> sellers = sellerDAO.getAllSellers();
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "name", "email", "phone", "walletId");
+                this.asciiTable.addRule();
                 for (Seller s : sellers) {
-                    System.out.println(s);
+                    // System.out.println(s);
+                    this.asciiTable.addRow(s.getId(), s.getName(), s.getEmail(), s.getPhone(), s.getWalletId());
+                    this.asciiTable.addRule();
                 }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 break;
             default:
                 break;

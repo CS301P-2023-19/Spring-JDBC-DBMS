@@ -165,7 +165,7 @@ public class EasyEcommApplication {
                                 String sortChoice = scan.next();
                                 sortChoice = sortChoice.strip().toLowerCase();
                                 if (sortChoice.equals("quantity")) {
-                                    orderBy.setAttr("quantity");
+                                    orderBy.setAttr("quantityAvailable");
                                 } else if (sortChoice.equals("price")) {
                                     orderBy.setAttr("price");
                                 }

@@ -52,7 +52,7 @@ public class CartItemDataResponse {
     @Override
     public String toString() {
         return "{" +
-            "\n name='" + getName() + "'" +
+            "'\n name='" + getName() + "'" +
             ",\n price='" + getPrice() + "'" +
             ",\n quantity='" + getQuantity() + "'" +
             ",\n productId='" + getProductId() + "'" +
