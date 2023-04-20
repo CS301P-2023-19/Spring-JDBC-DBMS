@@ -64,6 +64,7 @@ public class TransactionDAO {
 
     public int updateTransaction(Transaction transaction) {
         int count = 0;
+        
         String sql = "SELECT * FROM transaction WHERE customerId=" + transaction.getCustomerId() + " AND productId="
                 + transaction.getProductId() + " AND id=" + transaction.getId();
         List<Transaction> transactions = this.jdbcTemplate.query(sql, new TransactionMapper());

@@ -9,6 +9,8 @@ import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.transaction.TransactionDefinition;
@@ -181,7 +183,7 @@ public class MyApp {
             case "10":
                 if (customer != null) {
                     wallet.setId(customer.getWalletId());
-                } else {
+                } else if(seller != null) {
                     wallet.setId(seller.getWalletId());
                 }
                 count = walletDAO.updateWallet(wallet);
@@ -300,6 +302,7 @@ public class MyApp {
         try {
             if (!(customer.getWalletId() > 0)) {
                 System.out.println("Customer must link a wallet before purchase!");
+                platformTransactionManager.rollback(ts);
                 return (-1);
             }
             // Check cart of customer.
@@ -307,6 +310,7 @@ public class MyApp {
 
             if (cartItemDataResponses == null) {
                 System.out.println("Your cart is empty!");
+                platformTransactionManager.rollback(ts);
                 return (-2);
             }
 
@@ -320,6 +324,7 @@ public class MyApp {
                 if (p.getQuantity() > availableQuant) {
                     System.out.println("Insufficient quantity for productId: " + p.getProductId() + ", "
                             + availableQuant + " units are available.");
+                    platformTransactionManager.rollback(ts);
                     return (product.getId());
                 }
             }
@@ -356,18 +361,20 @@ public class MyApp {
 
                     if (seller == null) {
                         System.out.println("Seller offering the product not found!");
+                        platformTransactionManager.rollback(ts);
                         return (-1);
                     }
 
                     if (!(seller.getWalletId() > 0)) {
                         System.out.println("Wait! Seller does not have a linked wallet\nPlease remove product with Id: "
                                 + p.getProductId() + " from cart.");
+                        platformTransactionManager.rollback(ts);
                         return (p.getProductId());
                     }
 
                     updateWallet.setId(seller.getWalletId());
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
-                    updateWallet.setMoney(currentBalance + p.getPrice() * p.getQuantity());
+                    updateWallet.setMoney(updateWallet.getMoney() + p.getPrice() * p.getQuantity());
 
                     walletActions(null, seller, updateWallet, "update wallet", dao_Factory);
 
@@ -392,6 +399,8 @@ public class MyApp {
 
                     if (count <= 0) {
                         System.out.println("INSERT INTO TRANSACTION -- ERROR:\n productID: " + p.getProductId());
+                        platformTransactionManager.rollback(ts);
+                        return (-3);
                     }
 
                     // Update quantity in products table.
@@ -399,9 +408,11 @@ public class MyApp {
                 } else {
                     System.out.println("Insufficient balance for product Id: " + p.getProductId());
                     System.out.println("Please remove it from cart.");
+                    platformTransactionManager.rollback(ts);
                     return (p.getProductId());
                 }
             }
+            System.out.println("Committing...");
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
@@ -482,7 +493,6 @@ public class MyApp {
         System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
-
         try {
             // Check if customer has purchased the product.
             TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
@@ -496,16 +506,28 @@ public class MyApp {
                     // If yes, update transaction table, 7-day policy is checked internally, check
                     // if already returned.
                     if (!transaction.getReturnStatus()) {
-                        Transaction updated_transaction = new Transaction(transaction.getId(),
-                                transaction.getCustomerId(),
-                                transaction.getSellerId(), transaction.getSellerId(), transaction.getDate(), true);
-                        count = transactionDAO.updateTransaction(updated_transaction);
+
+                        // Check 7-day return policy.
+                        LocalDate dateDB = transaction.getDate().toLocalDate();
+                        LocalDate dateSS = LocalDate.now();
+                        long days = ChronoUnit.DAYS.between(dateDB, dateSS);
+                        System.out.println(days);
+
+                        if (days <= 7) {
+                            String sql = "UPDATE transaction SET returnStatus=? WHERE customerId=? AND productId=? AND id=?;";
+                            count = this.jdbcTemplate.update(sql, true,
+                                    transaction.getCustomerId(),
+                                    transaction.getProductId(), transaction.getId());
+                        } else {
+                            System.out.println("Too late to return the product.");
+                            return (-1);
+                        }
 
                         if (count > 0) {
                             System.out.println(
                                     "Returned product with Id: " + product.getId() + ", by " + customer.getId());
                         } else {
-                            platformTransactionManager.rollback(ts);
+                            System.out.println("Unable to return product, check with seller.");
                         }
                     } else {
                         System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: "
@@ -519,11 +541,9 @@ public class MyApp {
                 return (-1);
             }
 
-            platformTransactionManager.commit(ts);
             return (count);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex.getMessage());
-            platformTransactionManager.rollback(ts);
         }
 
         return (0); // Success

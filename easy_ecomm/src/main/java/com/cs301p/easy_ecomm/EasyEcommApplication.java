@@ -164,13 +164,13 @@ public class EasyEcommApplication {
                                 System.out.println("Enter attribute to sort on(quantity/price)");
                                 String sortChoice = scan.next();
                                 sortChoice = sortChoice.strip().toLowerCase();
-                                if (sortChoice == "quantity") {
+                                if (sortChoice.equals("quantity")) {
                                     orderBy.setAttr("quantity");
-                                } else if (sortChoice == "price") {
+                                } else if (sortChoice.equals("price")) {
                                     orderBy.setAttr("price");
                                 }
                                 System.out.println("Direction (asc/desc):");
-                                String direction = scan.next();
+                                String direction = scan.next().strip().toLowerCase();
                                 orderBy.setDirection(direction);
                             } else if (choice.equals("no") || choice.equals("n")) {
                                 orderBy.setAttr("id");
@@ -209,17 +209,16 @@ public class EasyEcommApplication {
                             int ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
 
                             if(ret > 0){
-                                while (ret != 0) {
+                                while (ret > 0) {
                                     System.out
-                                            .println("Should product with Id: " + ret + " be discarded from cart(yes/no)");
-                                    String updateCart = scan.next().strip().toLowerCase();
+                                            .println("Product with Id: " + ret + " will be discarded from cart!");
+                                    String updateCart = "yes";
                                     product.setId(ret);
                                     myApp.handleInsufficientQuantity(myApp.userCustomer, product, updateCart,
                                             dao_Factory);
                                     ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
                                 }
                             }
-
                         } else if (ch.equals("review a product") || ch.equals("7")) {
                             int stars;
                             String content;
@@ -233,10 +232,9 @@ public class EasyEcommApplication {
                             content = scan.nextLine();
                             myApp.reviewProduct(customer, product, stars, content, dao_Factory);
                         } else if (ch.equals("return a product") || ch.equals("8")) {
-                            customer.setId(myApp.userCustomer.getId());
                             System.out.println("Enter productID of item to be returned");
                             product.setId(scan.nextInt());
-                            myApp.returnProduct(customer, product, dao_Factory);
+                            myApp.returnProduct(myApp.userCustomer, product, dao_Factory);
                         } else if (ch.equals("link wallet") || ch.equals("9")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
                             walletC.setCredit_card_no(scan.next());
