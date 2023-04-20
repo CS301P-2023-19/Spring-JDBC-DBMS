@@ -100,7 +100,7 @@ public class ProductDAO {
 
     // Only gives seller with valid Id, if exists.
     public Seller getSellerByProductId(Product product) {
-        String sql = "SELECT sellerId from product where id=" + product.getId();
+        String sql = "SELECT * from product where id=" + product.getId();
         List<Product> products = this.jdbcTemplate.query(sql, new ProductMapper());
 
         if(products.size() == 0){

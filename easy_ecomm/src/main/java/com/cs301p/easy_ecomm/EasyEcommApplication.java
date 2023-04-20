@@ -65,8 +65,8 @@ public class EasyEcommApplication {
 
             if (loginStatus == 0) {
 
-                if (!myApp.isLoggedIn == false) {
-                    System.out.println("Login Successful!");
+                if (myApp.isLoggedIn) {
+                    System.out.println("Logged In!");
                     myApp.isLoggedIn = true;
                 }
 
@@ -208,13 +208,16 @@ public class EasyEcommApplication {
                         } else if (ch.equals("purchase products in cart") || ch.equals("6")) {
                             int ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
 
-                            while (ret != 0) {
-                                System.out
-                                        .println("Should product with Id: " + ret + " be discarded from cart(yes/no)");
-                                String updateCart = scan.next().strip().toLowerCase();
-                                myApp.handleInsufficientQuantity(myApp.userCustomer, product, updateCart,
-                                        dao_Factory);
-                                ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
+                            if(ret > 0){
+                                while (ret != 0) {
+                                    System.out
+                                            .println("Should product with Id: " + ret + " be discarded from cart(yes/no)");
+                                    String updateCart = scan.next().strip().toLowerCase();
+                                    product.setId(ret);
+                                    myApp.handleInsufficientQuantity(myApp.userCustomer, product, updateCart,
+                                            dao_Factory);
+                                    ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
+                                }
                             }
 
                         } else if (ch.equals("review a product") || ch.equals("7")) {
@@ -239,13 +242,13 @@ public class EasyEcommApplication {
                             walletC.setCredit_card_no(scan.next());
                             System.out.println("Input initial balance:");
                             walletC.setMoney(scan.nextFloat());
-                            myApp.walletActions(myApp.userCustomer, null, walletC, "link wallet", dao_Factory);
+                            myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
                         } else if (ch.equals("update wallet") || ch.equals("10")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
                             walletC.setCredit_card_no(scan.next());
                             System.out.println("Input new balance:");
                             walletC.setMoney(scan.nextFloat());
-                            myApp.walletActions(myApp.userCustomer, null, walletC, "update wallet", dao_Factory);
+                            myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
                         } else if (ch.equals("logout") || ch.equals("11")) {
                             System.out.println("Logging out...");
                             myApp.isLoggedIn = false;

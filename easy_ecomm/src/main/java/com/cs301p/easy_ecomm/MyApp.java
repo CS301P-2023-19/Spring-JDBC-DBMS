@@ -120,6 +120,7 @@ public class MyApp {
 
         switch (choice.strip().toLowerCase()) {
             case "link wallet":
+            case "9":
                 System.out.println();
                 System.out.println("Initiate multiple actions...");
                 TransactionDefinition td = new DefaultTransactionDefinition();
@@ -177,6 +178,12 @@ public class MyApp {
                     return (w.getMoney());
                 }
             case "update wallet":
+            case "10":
+                if (customer != null) {
+                    wallet.setId(customer.getWalletId());
+                } else {
+                    wallet.setId(seller.getWalletId());
+                }
                 count = walletDAO.updateWallet(wallet);
                 if (count > 0) {
                     System.out.println(
@@ -298,7 +305,7 @@ public class MyApp {
             // Check cart of customer.
             List<CartItemDataResponse> cartItemDataResponses = cartItemDAO.listCartItems(customer);
 
-            if (cartItemDataResponses.size() == 0) {
+            if (cartItemDataResponses == null) {
                 System.out.println("Your cart is empty!");
                 return (-2);
             }
@@ -334,11 +341,11 @@ public class MyApp {
 
                 Float currentBalance = walletActions(customer, null, null, "check", dao_Factory);
 
-                if (currentBalance >= p.getPrice()) {
+                if (currentBalance >= p.getPrice() * p.getQuantity()) {
                     // Deduct money and delete from cart.
                     Wallet updateWallet = new Wallet(customer.getWalletId(), null, null);
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
-                    updateWallet.setMoney(currentBalance - p.getPrice());
+                    updateWallet.setMoney(currentBalance - p.getPrice() * p.getQuantity());
 
                     walletActions(customer, null, updateWallet, "update wallet", dao_Factory);
 
@@ -353,13 +360,14 @@ public class MyApp {
                     }
 
                     if (!(seller.getWalletId() > 0)) {
-                        System.out.println("Wait! Seller does not have a linked wallet.");
+                        System.out.println("Wait! Seller does not have a linked wallet\nPlease remove product with Id: "
+                                + p.getProductId() + " from cart.");
                         return (p.getProductId());
                     }
 
                     updateWallet.setId(seller.getWalletId());
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
-                    updateWallet.setMoney(currentBalance + p.getPrice());
+                    updateWallet.setMoney(currentBalance + p.getPrice() * p.getQuantity());
 
                     walletActions(null, seller, updateWallet, "update wallet", dao_Factory);
 
@@ -375,7 +383,7 @@ public class MyApp {
                             productDAO.getProductById(product).getQuantityAvailable() - p.getQuantity());
 
                     Date date = new Date(System.currentTimeMillis());
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     String formattedDate = formatter.format(date);
 
                     count = this.jdbcTemplate.update(sql, new_id, customer.getId(),
@@ -390,9 +398,10 @@ public class MyApp {
                     productDAO.updateProduct(product);
                 } else {
                     System.out.println("Insufficient balance for product Id: " + p.getProductId());
+                    System.out.println("Please remove it from cart.");
+                    return (p.getProductId());
                 }
             }
-
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
@@ -453,6 +462,7 @@ public class MyApp {
                     } else {
                         System.out.println("Unable to add review for specified product");
                     }
+                    break;
                 }
             }
             platformTransactionManager.commit(ts);
@@ -624,7 +634,7 @@ public class MyApp {
         userAdmin = null;
         userCustomer = null;
         userSeller = null;
-        this.isLoggedIn = true;
+        this.isLoggedIn = false;
 
         switch (userType) {
             case "customer":

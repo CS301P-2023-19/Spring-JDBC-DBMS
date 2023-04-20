@@ -61,7 +61,7 @@ public class SellerDAO {
     }
 
     public Seller getSellerById(Seller seller) {
-        String sql = "SELECT * FROM seller WHERE id=" + seller;
+        String sql = "SELECT * FROM seller WHERE id=" + seller.getId();
         List <Seller> sellers = this.jdbcTemplate.query(sql, new SellerMapper());
 
         if(sellers.size() == 0){
