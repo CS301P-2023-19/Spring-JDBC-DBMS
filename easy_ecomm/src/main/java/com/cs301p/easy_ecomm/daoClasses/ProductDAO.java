@@ -129,7 +129,7 @@ public class ProductDAO {
                 result = this.jdbcTemplate.query(sql, new ProductMapper());
 
             } else {
-                sql = "SELECT * FROM product WHERE " + filter_by.getAttr() + "=" + filter_by.getL_val() + " ORDER BY "
+                sql = "SELECT * FROM product WHERE " + filter_by.getAttr() + "='" + filter_by.getL_val() + "' ORDER BY "
                         + sort_by.getAttr() + " "
                         + sort_by.getDirection();
                 result = this.jdbcTemplate.query(sql, new ProductMapper());

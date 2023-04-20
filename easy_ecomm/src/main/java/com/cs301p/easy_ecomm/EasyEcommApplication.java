@@ -2,7 +2,10 @@ package com.cs301p.easy_ecomm;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Filter;
 
+import com.cs301p.easy_ecomm.utilClasses.FilterBy;
+import com.cs301p.easy_ecomm.utilClasses.OrderBy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +30,8 @@ public class EasyEcommApplication {
         Wallet walletS = new Wallet(0, "CCN", (float) 0.00);
         Product product = new Product(0, "type", "name", 0, (float) 0.00, 0);
         CartItem cartItem = new CartItem(0, 0, 0);
+        FilterBy filterBy = new FilterBy(false,"price","0","0");
+        OrderBy orderBy = new OrderBy("","");
 
         boolean isLoggedIn = false;
         List<String> authParams = null;
@@ -114,8 +119,68 @@ public class EasyEcommApplication {
                     ch = appMenu.customerMenu(scan);
 
                     if (ch.equals("list products") || ch.equals("1")) {
-                        myApp.listingActions(null, null, dao_Factory);
-                        // Add sorting and filtering as well.
+
+                        System.out.println("Do you wish to filter the products (Yes/No)?");
+                        String choice = scan.next();
+                        choice=choice.strip().toLowerCase();
+                        if(choice.equals("yes") || choice.equals("y")){
+                            System.out.println("Enter attribute to filter on(type/price)");
+                            String filterChoice = scan.next();
+                            filterChoice=filterChoice.strip().toLowerCase();
+                            if(filterChoice.equals("type")){
+                                String type;
+                                System.out.println("Enter the type:");
+                                type=scan.next();
+                                filterBy.setIsBetween(false);
+                                filterBy.setAttr("type");
+                                filterBy.setL_val(type);
+                            }else if(filterChoice.equals("price")){
+                                String lowerLimit,higherLimit;
+                                System.out.println("Enter the lower limit");
+                                lowerLimit=scan.next();
+                                System.out.println("Enter the higher limit");
+                                higherLimit=scan.next();
+                                filterBy.setIsBetween(true);
+                                filterBy.setAttr("price");
+                                filterBy.setL_val(lowerLimit);
+                                filterBy.setH_val(higherLimit);
+                            }else{
+                                System.out.println("Invalid attribute");
+                            }
+                        }else if(choice.equals("no") || choice.equals("n")){
+                            filterBy.setIsBetween(false);
+                            filterBy=null;
+                        }else{
+                            System.out.println("Invalid choice, assuming no.");
+                            filterBy=null;
+                        }
+
+                        System.out.println("Do you wish to sort the products (Yes/No)?");
+                        choice = scan.next();
+                        choice=choice.strip().toLowerCase();
+                        if(choice.equals("yes") || choice.equals("y")){
+                            System.out.println("Enter attribute to sort on(quantity/price)");
+                            String sortChoice = scan.next();
+                            sortChoice=sortChoice.strip().toLowerCase();
+                            if(sortChoice=="quantity"){
+                                orderBy.setAttr("quantity");
+                            }else if(sortChoice=="price"){
+                                orderBy.setAttr("price");
+                            }
+                            System.out.println("Direction (asc/desc):");
+                            String direction= scan.next();
+                            orderBy.setDirection(direction);
+                        }else if(choice.equals("no") || choice.equals("n")){
+                            orderBy.setAttr("id");
+                            orderBy.setDirection("asc");
+                        }else{
+                            System.out.println("Invalid choice, assuming no.");
+                            orderBy.setAttr("id");
+                            orderBy.setDirection("asc");
+                        }
+
+                        myApp.listingActions(filterBy, orderBy, dao_Factory);
+
                     } else if (ch.equals("add product to cart") || ch.equals("2")) {
                         cartItem.setCustomerId(myApp.userCustomer.getId());
                         System.out.println("Enter the productId to be added:");
