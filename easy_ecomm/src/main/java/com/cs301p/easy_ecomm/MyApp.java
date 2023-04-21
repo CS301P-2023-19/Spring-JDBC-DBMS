@@ -73,17 +73,20 @@ public class MyApp {
                 }
                 return (count);
             case "update product":
-            case "2":
+            case "3":
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
                 }
                 return (count);
             case "remove product":
-            case "3":
+            case "2":
                 count = productDAO.deleteProduct(product);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + product.getId());
+                }
+                else{
+                    System.out.println("Product to remove not found!");
                 }
                 return (count);
             default:
