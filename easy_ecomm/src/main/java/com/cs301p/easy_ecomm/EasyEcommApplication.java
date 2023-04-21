@@ -43,11 +43,10 @@ public class EasyEcommApplication {
 
         while (true) {
             String ch = null;
-            System.out.println(
-                    "=====================================================================================================================================");
-            System.out.println(
-                    "=====================================================================================================================================");
             System.out.println();
+            System.out.println(
+                    "=====================================================================================================================================");
+            
 
             if (!myApp.isLoggedIn) {
                 q = appMenu.userMenu(scan);
@@ -211,7 +210,7 @@ public class EasyEcommApplication {
                         } else if (ch.equals("purchase products in cart") || ch.equals("6")) {
                             int ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
 
-                            if(ret > 0){
+                            if (ret > 0) {
                                 while (ret > 0) {
                                     System.out
                                             .println("Product with Id: " + ret + " will be discarded from cart!");
@@ -250,7 +249,13 @@ public class EasyEcommApplication {
                             System.out.println("Input new balance:");
                             walletC.setMoney(scan.nextFloat());
                             myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                        } else if (ch.equals("logout") || ch.equals("11")) {
+                        } else if (ch.equals("view your reviews") || ch.equals("11")) {
+                            myApp.reviewActions(myApp.userCustomer, null, ch, dao_Factory);
+                        } else if (ch.equals("view reviews by product") || ch.equals("12")) {
+                            System.out.println("Enter productId:");
+                            product.setId(scan.nextInt());
+                            myApp.reviewActions(null, product, ch, dao_Factory);
+                        } else if (ch.equals("logout") || ch.equals("13")) {
                             System.out.println("Logging out...");
                             myApp.isLoggedIn = false;
                         } else {
@@ -319,8 +324,6 @@ public class EasyEcommApplication {
             }
 
             System.out.println();
-            System.out.println(
-                    "=====================================================================================================================================");
             System.out.println(
                     "=====================================================================================================================================");
             System.out.println("Press enter to continue");

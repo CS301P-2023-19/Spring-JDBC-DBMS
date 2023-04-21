@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class AppMenu {
     public String userMenu(Scanner scan) {
         System.out.println(
-                "--------------------------------------------------------------User Menu--------------------------------------------------------------");
+                "--------------------------------------------------------------User Menu---------------------------------------------------------------");
         System.out.println("Choose type of user: ");
         System.out.println("1.) Admin");
         System.out.println("2.) Customer");
@@ -15,22 +15,19 @@ public class AppMenu {
         System.out.println("4.) Quit");
         System.out.print("=> ");
         String q = scan.next().strip().toLowerCase();
-        System.out.println(
-                "-------------------------------------------------------------------------------------------------------------------------------------");
+
         return (q);
     }
 
     public List<String> loginMenu(Scanner scan) {
         System.out.println(
-                "--------------------------------------------------------------Login Menu-------------------------------------------------------------");
+                "--------------------------------------------------------------Login Menu--------------------------------------------------------------");
         System.out.println("Enter Email (or name for admin): ");
         System.out.print("=> ");
         String usrName = scan.next();
         System.out.println("Enter Password: ");
         System.out.print("=> ");
         String psswd = scan.next();
-        System.out.println(
-                "-------------------------------------------------------------------------------------------------------------------------------------");
 
         List<String> l = new ArrayList<String>(0);
         l.add(usrName);
@@ -40,7 +37,7 @@ public class AppMenu {
 
     public String adminMenu(Scanner scan) {
         System.out.println(
-                "--------------------------------------------------------------Admin Menu-------------------------------------------------------------");
+                "--------------------------------------------------------------Admin Menu--------------------------------------------------------------");
         System.out.println("Choose Operation: ");
         System.out.println("1.) Add Customer");
         System.out.println("2.) Add Seller");
@@ -52,8 +49,7 @@ public class AppMenu {
         // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
-        System.out.println(
-                "--------------------------------------------------------------------------------------------------------------------------------------");
+
         return (ch);
     }
 
@@ -61,22 +57,23 @@ public class AppMenu {
         System.out.println(
                 "--------------------------------------------------------------Customer Menu-----------------------------------------------------------");
         System.out.println("Choose Operation: ");
-        System.out.println("1.) List Products");
-        System.out.println("2.) Add Product To Cart");
-        System.out.println("3.) Remove Product From Cart");
-        System.out.println("4.) Update Product In Cart");
-        System.out.println("5.) List Cart Items");
-        System.out.println("6.) Purchase Products In Cart");
-        System.out.println("7.) Review A Product");
-        System.out.println("8.) Return A Product");
-        System.out.println("9.) Link Wallet");
+        System.out.println(" 1.) List Products");
+        System.out.println(" 2.) Add Product To Cart");
+        System.out.println(" 3.) Remove Product From Cart");
+        System.out.println(" 4.) Update Product In Cart");
+        System.out.println(" 5.) List Cart Items");
+        System.out.println(" 6.) Purchase Products In Cart");
+        System.out.println(" 7.) Review A Product");
+        System.out.println(" 8.) Return A Product");
+        System.out.println(" 9.) Link Wallet");
         System.out.println("10.) Update Wallet");
-        System.out.println("11.) Logout");
+        System.out.println("11.) View your reviews");
+        System.out.println("12.) View reviews by product");
+        System.out.println("13.) Logout");
         // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
-        System.out.println(
-                "--------------------------------------------------------------------------------------------------------------------------------------");
+
         return (ch);
     }
 
@@ -93,8 +90,7 @@ public class AppMenu {
         // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
-        System.out.println(
-                "--------------------------------------------------------------------------------------------------------------------------------------");
+
         return (ch);
     }
 }

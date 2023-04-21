@@ -35,6 +35,7 @@ import com.cs301p.easy_ecomm.mappers.ShippingDetailsDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
 import com.cs301p.easy_ecomm.mappers.WalletMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
+import com.cs301p.easy_ecomm.responseClasses.ReviewDataResponse;
 import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
 import com.cs301p.easy_ecomm.utilClasses.FilterBy;
 import com.cs301p.easy_ecomm.utilClasses.OrderBy;
@@ -519,8 +520,8 @@ public class MyApp {
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
-        TransactionDefinition td = new DefaultTransactionDefinition();
-        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
+        // TransactionDefinition td = new DefaultTransactionDefinition();
+        // TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
         try {
             // Check if customer has purchased the product.
             TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
@@ -607,6 +608,54 @@ public class MyApp {
             platformTransactionManager.rollback(ts);
         }
 
+        return (0);
+    }
+
+    // Review Actions.
+    public int reviewActions(Customer customer, Product product, String choice, DAO_Factory dao_Factory) {
+        ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
+        List<ReviewDataResponse> reviews;
+        String output = "";
+        switch (choice.strip().toLowerCase()) {
+            case "view reviews by product":
+            case "12":
+                reviews = reviewDAO.getReviewsByProduct(product);
+
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "productId", "customerName", "productName", "stars (0-5)", "content");
+                this.asciiTable.addRule();
+
+                for (ReviewDataResponse r : reviews) {
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(), r.getStars(),
+                            r.getContent());
+                    this.asciiTable.addRule();
+                }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
+
+                break;
+
+            case "view your reviews":
+            case "11":
+                reviews = reviewDAO.getReviewsByCustomer(customer);
+
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "productId", "customerName", "productName", "stars (0-5)", "content");
+                this.asciiTable.addRule();
+
+                for (ReviewDataResponse r : reviews) {
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(), r.getStars(),
+                            r.getContent());
+                    this.asciiTable.addRule();
+                }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
+                break;
+        }
         return (0);
     }
 
