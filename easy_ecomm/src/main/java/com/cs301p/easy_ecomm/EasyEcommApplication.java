@@ -285,7 +285,7 @@ public class EasyEcommApplication {
                         }
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity of data...");
-                        System.out.println(e.getMessage());
+                        // System.out.println(e.getMessage());
                     }
 
                 } else if (q.equals("seller") || q.equals("3")) {

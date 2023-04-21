@@ -208,6 +208,9 @@ public class MyApp {
                 if (count > 0) {
                     System.out.println(
                             "Updated wallet with Id: " + wallet.getId() + "\nNew balance: " + wallet.getMoney());
+                } else {
+                    System.out.println(
+                            "Unable to update wallet, credit card number may already be in use or data provided is invalid");
                 }
                 break;
             default:
@@ -246,6 +249,8 @@ public class MyApp {
                                 "Insufficient quantity of product with Id: " + product.getId() + " available.");
                         return (-1);
                     }
+                } else {
+                    return (-1);
                 }
             case "update product in cart":
             case "4":
@@ -520,8 +525,8 @@ public class MyApp {
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
-        // TransactionDefinition td = new DefaultTransactionDefinition();
-        // TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
+        TransactionDefinition td = new DefaultTransactionDefinition();
+        TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
         try {
             // Check if customer has purchased the product.
             TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
@@ -540,24 +545,23 @@ public class MyApp {
                         LocalDate dateDB = transaction.getDate().toLocalDate();
                         LocalDate dateSS = LocalDate.now();
                         long days = ChronoUnit.DAYS.between(dateDB, dateSS);
-                        System.out.println(days);
 
                         if (days <= 7) {
                             String sql = "UPDATE transaction SET returnStatus=? WHERE customerId=? AND productId=? AND id=?;";
                             count = this.jdbcTemplate.update(sql, true,
                                     transaction.getCustomerId(),
                                     transaction.getProductId(), transaction.getId());
+                            if (count > 0) {
+                                System.out.println(
+                                        "Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                            } else {
+                                System.out.println("Unable to return product, check with seller.");
+                            }
                         } else {
                             System.out.println("Too late to return the product.");
                             return (-1);
                         }
 
-                        if (count > 0) {
-                            System.out.println(
-                                    "Returned product with Id: " + product.getId() + ", by " + customer.getId());
-                        } else {
-                            System.out.println("Unable to return product, check with seller.");
-                        }
                     } else {
                         System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: "
                                 + transaction.getDate() + " was returned earlier!");
@@ -567,15 +571,18 @@ public class MyApp {
 
             if (cnt == 0) {
                 System.out.println("Can not return a product which hasn't been purchased!");
+                platformTransactionManager.rollback(ts);
                 return (-1);
             }
 
-            return (count);
+            platformTransactionManager.commit(ts);
+            return (0);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex.getMessage());
+            platformTransactionManager.rollback(ts);
+            return(-1);
         }
 
-        return (0); // Success
     }
 
     // ADDITIONAL: Get customer address of a particular transaction. (IMT2021055).
@@ -627,7 +634,8 @@ public class MyApp {
                 this.asciiTable.addRule();
 
                 for (ReviewDataResponse r : reviews) {
-                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(), r.getStars(),
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(),
+                            r.getStars(),
                             r.getContent());
                     this.asciiTable.addRule();
                 }
@@ -647,7 +655,8 @@ public class MyApp {
                 this.asciiTable.addRule();
 
                 for (ReviewDataResponse r : reviews) {
-                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(), r.getStars(),
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(),
+                            r.getStars(),
                             r.getContent());
                     this.asciiTable.addRule();
                 }
