@@ -84,9 +84,17 @@ public class MyApp {
                 count = productDAO.deleteProduct(product);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + product.getId());
-                }
-                else{
+                } else if (count == 0) {
                     System.out.println("Product to remove not found!");
+                } else {
+                    System.out.println(
+                            "The product you are trying to remove has been purchased by customer(s)\nWe can not remove it from our records, setting its quantity and price to 0...");
+                    product.setQuantityAvailable(0);
+                    product.setPrice((float)0.00);        
+                    count = productDAO.updateProduct(product);
+                    if (count > 0) {
+                        System.out.println("Updated product with Id: " + product.getId());
+                    }
                 }
                 return (count);
             default:
@@ -583,7 +591,7 @@ public class MyApp {
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex.getMessage());
             platformTransactionManager.rollback(ts);
-            return(-1);
+            return (-1);
         }
 
     }

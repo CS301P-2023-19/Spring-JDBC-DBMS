@@ -47,7 +47,6 @@ public class EasyEcommApplication {
             System.out.println();
             System.out.println(
                     "=====================================================================================================================================");
-            
 
             if (!myApp.isLoggedIn) {
                 q = appMenu.userMenu(scan);
@@ -180,7 +179,7 @@ public class EasyEcommApplication {
                                 }
                                 System.out.println("Direction (asc/desc):");
                                 String direction = scan.next().strip().toLowerCase();
-                                if(!(direction.equals("asc") || direction.equals("desc"))){
+                                if (!(direction.equals("asc") || direction.equals("desc"))) {
                                     System.out.println("Invalid choice, assuming asc.");
                                     direction = "asc";
                                 }
@@ -333,7 +332,14 @@ public class EasyEcommApplication {
                             walletS.setId(myApp.userSeller.getWalletId());
                             scan.nextLine();///////////////
                             myApp.walletActions(null, myApp.userSeller, walletS, "update wallet", dao_Factory);
-                        } else if (ch.equals("logout") || ch.equals("6")) {
+                        } else if (ch.equals("list your products") || ch.equals("6")) {
+                            filterBy = filterByBlank;
+                            orderBy = orderByBlank;
+                            filterBy.setAttr("sellerId");
+                            filterBy.setL_val(String.format("%s", myApp.userSeller.getId()));;
+
+                            myApp.listingActions(filterBy, orderBy, dao_Factory);
+                        } else if (ch.equals("logout") || ch.equals("7")) {
                             System.out.println("Logging out...");
                             myApp.isLoggedIn = false;
                         } else {

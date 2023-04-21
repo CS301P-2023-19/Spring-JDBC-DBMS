@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -91,7 +92,8 @@ public class ProductDAO {
 
         try {            
             count = this.jdbcTemplate.update(sql, product.getId());
-        } catch (Exception e) {
+        } catch (DataIntegrityViolationException de) {
+            // System.out.println(e);
             return(-1);
         }
 

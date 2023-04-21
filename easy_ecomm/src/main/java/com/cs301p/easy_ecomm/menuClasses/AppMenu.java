@@ -87,7 +87,8 @@ public class AppMenu {
         System.out.println("3.) Update Product");
         System.out.println("4.) Link Wallet");
         System.out.println("5.) Update Wallet");
-        System.out.println("6.) Logout");
+        System.out.println("6.) List your products");
+        System.out.println("7.) Logout");
         // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
