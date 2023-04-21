@@ -690,7 +690,7 @@ public class MyApp {
             case "3":
                 count = customerDAO.deleteCustomer(customer);
                 if (count > 0) {
-                    System.out.println("Removed customer with email: " + customer.getEmail());
+                    System.out.println("Removed customer with Id: " + customer.getId());
                 } else {
                     System.out.println(
                             "Can not remove customer, no match found.");
@@ -700,7 +700,7 @@ public class MyApp {
             case "4":
                 count = sellerDAO.deleteSeller(seller);
                 if (count > 0) {
-                    System.out.println("Removed seller with email: " + customer.getEmail());
+                    System.out.println("Removed seller with email: " + seller.getId());
                 } else {
                     System.out.println(
                             "Can not remove seller, no match found.");

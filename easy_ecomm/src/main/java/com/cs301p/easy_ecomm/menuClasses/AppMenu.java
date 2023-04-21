@@ -28,7 +28,8 @@ public class AppMenu {
         System.out.println("Enter Password: ");
         System.out.print("=> ");
         String psswd = scan.next();
-
+        scan.nextLine();///////////////
+        
         List<String> l = new ArrayList<String>(0);
         l.add(usrName);
         l.add(psswd);
@@ -49,7 +50,7 @@ public class AppMenu {
         // scan.nextLine();
         System.out.print("=> ");
         String ch = scan.nextLine().strip().toLowerCase();
-
+        
         return (ch);
     }
 
