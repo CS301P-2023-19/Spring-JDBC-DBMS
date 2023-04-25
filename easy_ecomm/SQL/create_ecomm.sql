@@ -35,7 +35,8 @@ CREATE TABLE wallet(
     id INT NOT NULL AUTO_INCREMENT,
     credit_card_no VARCHAR(20) NOT NULL UNIQUE,
     money DECIMAL(10,2) NOT NULL,
-    CONSTRAINT walletPK PRIMARY KEY (id)
+    CONSTRAINT walletPK PRIMARY KEY (id),
+    CONSTRAINT chkWallet CHECK (money > 0)
 );
 
 CREATE TABLE product(
@@ -45,7 +46,8 @@ CREATE TABLE product(
     sellerId INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     quantityAvailable INT NOT NULL,
-    CONSTRAINT productPK PRIMARY KEY (id)
+    CONSTRAINT productPK PRIMARY KEY (id),
+    CONSTRAINT chkProduct CHECK (price > 0 AND quantityAvailable > 0)
 );
 
 CREATE TABLE transaction(
@@ -63,11 +65,13 @@ CREATE TABLE review(
     productId INT NOT NULL,
     stars INT NOT NULL,
     content VARCHAR(500),
-    CONSTRAINT reviewPK PRIMARY KEY(id)
+    CONSTRAINT reviewPK PRIMARY KEY(id),
+    CONSTRAINT chkReview CHECK (stars >= 0 AND stars <= 5)
 );
 
 CREATE TABLE cart_item(
     customerId INT NOT NULL,
     productId INT NOT NULL,
-    quantity INT NOT NULL
+    quantity INT NOT NULL,
+    CONSTRAINT chkCartItem CHECK (quantity > 0)
 );
