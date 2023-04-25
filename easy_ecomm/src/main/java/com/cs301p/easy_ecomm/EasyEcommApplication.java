@@ -164,9 +164,9 @@ public class EasyEcommApplication {
                                 System.out.println("Enter attribute to sort on(quantity/price)");
                                 String sortChoice = scan.next();
                                 sortChoice = sortChoice.strip().toLowerCase();
-                                if (sortChoice == "quantity") {
+                                if (sortChoice.equals("quantity")) {
                                     orderBy.setAttr("quantity");
-                                } else if (sortChoice == "price") {
+                                } else if (sortChoice.equals("price")) {
                                     orderBy.setAttr("price");
                                 }
                                 System.out.println("Direction (asc/desc):");
