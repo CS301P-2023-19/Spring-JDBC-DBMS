@@ -113,6 +113,7 @@ public class CustomerDAO {
         try {
             count = this.jdbcTemplate.update(sql, customer.getId());
         } catch (Exception e) {
+            // System.out.println(e.getMessage());
             return (-1);
         }
 

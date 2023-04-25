@@ -36,7 +36,7 @@ FOREIGN KEY (productId) REFERENCES product(id) ON DELETE CASCADE;
 
 ALTER TABLE cart_item
 ADD CONSTRAINT FK_Cart_ItemCustomer
-FOREIGN KEY (customerId) REFERENCES customer(id);
+FOREIGN KEY (customerId) REFERENCES customer(id) ON DELETE CASCADE;
 
 ALTER TABLE cart_item
 ADD CONSTRAINT FK_CartItemProduct

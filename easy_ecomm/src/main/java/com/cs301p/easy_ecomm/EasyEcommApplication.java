@@ -31,6 +31,8 @@ public class EasyEcommApplication {
         CartItem cartItem = new CartItem(0, 0, 0);
         FilterBy filterBy = new FilterBy(false, "price", "0", "0");
         OrderBy orderBy = new OrderBy("", "");
+        OrderBy orderByBlank = new OrderBy("id", "asc");
+        FilterBy filterByBlank = new FilterBy(true, "id", "0", "1000000");
 
         List<String> authParams = null;
         String q = null;
@@ -42,11 +44,9 @@ public class EasyEcommApplication {
 
         while (true) {
             String ch = null;
-            System.out.println(
-                    "=====================================================================================================================================");
-            System.out.println(
-                    "=====================================================================================================================================");
             System.out.println();
+            System.out.println(
+                    "=====================================================================================================================================");
 
             if (!myApp.isLoggedIn) {
                 q = appMenu.userMenu(scan);
@@ -84,6 +84,7 @@ public class EasyEcommApplication {
                             customer.setPassword(scan.next());
                             customer.setPhone(scan.next());
                             customer.setAddress(scan.next());
+                            scan.nextLine();///////////////
                         } else if (ch.equals("add seller") || ch.equals("2")) {
                             System.out.println(
                                     "Input name, email, password and phone as continuous space-seperated strings:");
@@ -92,14 +93,18 @@ public class EasyEcommApplication {
                             seller.setEmail(scan.next());
                             seller.setPassword(scan.next());
                             seller.setPhone(scan.next());
+                            scan.nextLine();///////////////
                         } else if (ch.equals("remove customer") || ch.equals("3")) {
                             System.out.println("Input customer Id to remove:");
                             System.out.print("=> ");
                             customer.setId(scan.nextInt());
+                            System.out.println(customer.getId());
+                            scan.nextLine();///////////////
                         } else if (ch.equals("remove seller") || ch.equals("4")) {
                             System.out.println("Input seller Id to remove:");
                             System.out.print("=> ");
                             seller.setId(scan.nextInt());
+                            scan.nextLine();///////////////
                         } else if (ch.equals("list all customers") || ch.equals("5")) {
                             System.out.println("List of all customers:");
                         } else if (ch.equals("list all sellers") || ch.equals("6")) {
@@ -122,6 +127,8 @@ public class EasyEcommApplication {
                     ch = appMenu.customerMenu(scan);
                     try {
                         if (ch.equals("list products") || ch.equals("1")) {
+                            filterBy = filterByBlank;
+                            orderBy = orderByBlank;
                             System.out.println("Do you wish to filter the products (Yes/No)?");
                             String choice = scan.next();
                             choice = choice.strip().toLowerCase();
@@ -142,6 +149,7 @@ public class EasyEcommApplication {
                                     lowerLimit = scan.next();
                                     System.out.println("Enter the higher limit");
                                     higherLimit = scan.next();
+                                    System.out.println(higherLimit + "    " + lowerLimit);
                                     filterBy.setIsBetween(true);
                                     filterBy.setAttr("price");
                                     filterBy.setL_val(lowerLimit);
@@ -165,12 +173,16 @@ public class EasyEcommApplication {
                                 String sortChoice = scan.next();
                                 sortChoice = sortChoice.strip().toLowerCase();
                                 if (sortChoice.equals("quantity")) {
-                                    orderBy.setAttr("quantity");
+                                    orderBy.setAttr("quantityAvailable");
                                 } else if (sortChoice.equals("price")) {
                                     orderBy.setAttr("price");
                                 }
                                 System.out.println("Direction (asc/desc):");
-                                String direction = scan.next();
+                                String direction = scan.next().strip().toLowerCase();
+                                if (!(direction.equals("asc") || direction.equals("desc"))) {
+                                    System.out.println("Invalid choice, assuming asc.");
+                                    direction = "asc";
+                                }
                                 orderBy.setDirection(direction);
                             } else if (choice.equals("no") || choice.equals("n")) {
                                 orderBy.setAttr("id");
@@ -181,26 +193,32 @@ public class EasyEcommApplication {
                                 orderBy.setDirection("asc");
                             }
 
+                            scan.nextLine();///////////////
                             myApp.listingActions(filterBy, orderBy, dao_Factory);
 
                         } else if (ch.equals("add product to cart") || ch.equals("2")) {
                             cartItem.setCustomerId(myApp.userCustomer.getId());
                             System.out.println("Enter the productId to be added:");
                             cartItem.setProductId(scan.nextInt());
+                            scan.nextLine();///////////////
                             System.out.println("Enter the quantity of the item to be added:");
                             cartItem.setQuantity(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.cartItemActions(cartItem, ch, dao_Factory);
                         } else if (ch.equals("remove product from cart") || ch.equals("3")) {
                             cartItem.setCustomerId(myApp.userCustomer.getId());
                             System.out.println("Enter the productId to be removed:");
                             cartItem.setProductId(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.cartItemActions(cartItem, ch, dao_Factory);
                         } else if (ch.equals("update product in cart") || ch.equals("4")) {
                             cartItem.setCustomerId(myApp.userCustomer.getId());
                             System.out.println("Enter the productId to be updated:");
                             cartItem.setProductId(scan.nextInt());
+                            scan.nextLine();///////////////
                             System.out.println("Enter the quantity of the item to be changed:");
                             cartItem.setQuantity(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.cartItemActions(cartItem, ch, dao_Factory);
                         } else if (ch.equals("list cart items") || ch.equals("5")) {
                             cartItem.setCustomerId(myApp.userCustomer.getId());
@@ -208,18 +226,17 @@ public class EasyEcommApplication {
                         } else if (ch.equals("purchase products in cart") || ch.equals("6")) {
                             int ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
 
-                            if(ret > 0){
-                                while (ret != 0) {
+                            if (ret > 0) {
+                                while (ret > 0) {
                                     System.out
-                                            .println("Should product with Id: " + ret + " be discarded from cart(yes/no)");
-                                    String updateCart = scan.next().strip().toLowerCase();
+                                            .println("Product with Id: " + ret + " will be discarded from cart!");
+                                    String updateCart = "yes";
                                     product.setId(ret);
                                     myApp.handleInsufficientQuantity(myApp.userCustomer, product, updateCart,
                                             dao_Factory);
                                     ret = myApp.purchaseCart(myApp.userCustomer, dao_Factory);
                                 }
                             }
-
                         } else if (ch.equals("review a product") || ch.equals("7")) {
                             int stars;
                             String content;
@@ -231,25 +248,35 @@ public class EasyEcommApplication {
                             System.out.println("Enter review description:");
                             scan.nextLine();
                             content = scan.nextLine();
+                            scan.nextLine();///////////////
                             myApp.reviewProduct(customer, product, stars, content, dao_Factory);
                         } else if (ch.equals("return a product") || ch.equals("8")) {
-                            customer.setId(myApp.userCustomer.getId());
                             System.out.println("Enter productID of item to be returned");
                             product.setId(scan.nextInt());
-                            myApp.returnProduct(customer, product, dao_Factory);
+                            scan.nextLine();///////////////
+                            myApp.returnProduct(myApp.userCustomer, product, dao_Factory);
                         } else if (ch.equals("link wallet") || ch.equals("9")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
                             walletC.setCredit_card_no(scan.next());
                             System.out.println("Input initial balance:");
                             walletC.setMoney(scan.nextFloat());
+                            scan.nextLine();///////////////
                             myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
                         } else if (ch.equals("update wallet") || ch.equals("10")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
                             walletC.setCredit_card_no(scan.next());
                             System.out.println("Input new balance:");
                             walletC.setMoney(scan.nextFloat());
+                            scan.nextLine();///////////////
                             myApp.walletActions(myApp.userCustomer, null, walletC, ch, dao_Factory);
-                        } else if (ch.equals("logout") || ch.equals("11")) {
+                        } else if (ch.equals("view your reviews") || ch.equals("11")) {
+                            myApp.reviewActions(myApp.userCustomer, null, ch, dao_Factory);
+                        } else if (ch.equals("view reviews by product") || ch.equals("12")) {
+                            System.out.println("Enter productId:");
+                            product.setId(scan.nextInt());
+                            scan.nextLine();///////////////
+                            myApp.reviewActions(null, product, ch, dao_Factory);
+                        } else if (ch.equals("logout") || ch.equals("13")) {
                             System.out.println("Logging out...");
                             myApp.isLoggedIn = false;
                         } else {
@@ -257,6 +284,7 @@ public class EasyEcommApplication {
                         }
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity of data...");
+                        // System.out.println(e.getMessage());
                     }
 
                 } else if (q.equals("seller") || q.equals("3")) {
@@ -272,24 +300,29 @@ public class EasyEcommApplication {
                             product.setSellerId(myApp.userSeller.getId());
                             product.setPrice(scan.nextFloat());
                             product.setQuantityAvailable(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.sellerActions(product, ch, dao_Factory);
                         } else if (ch.equals("remove product") || ch.equals("2")) {
                             System.out.println("Input product Id to remove:");
                             product.setId(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.sellerActions(product, ch, dao_Factory);
                         } else if (ch.equals("update product") || ch.equals("3")) {
                             System.out.println("Input product Id to update:");
                             product.setId(scan.nextInt());
+                            scan.nextLine();///////////////
                             System.out.println("Input updated price:");
                             product.setPrice(scan.nextFloat());
                             System.out.println("Input updated quantity:");
                             product.setQuantityAvailable(scan.nextInt());
+                            scan.nextLine();///////////////
                             myApp.sellerActions(product, ch, dao_Factory);
                         } else if (ch.equals("link wallet") || ch.equals("4")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
                             walletS.setCredit_card_no(scan.next());
                             System.out.println("Input initial balance:");
                             walletS.setMoney(scan.nextFloat());
+                            scan.nextLine();///////////////
                             myApp.walletActions(null, myApp.userSeller, walletS, "link wallet", dao_Factory);
                         } else if (ch.equals("update wallet") || ch.equals("5")) {
                             System.out.println("Enter credit card number to be associated with wallet:");
@@ -297,8 +330,16 @@ public class EasyEcommApplication {
                             System.out.println("Input new balance:");
                             walletS.setMoney(scan.nextFloat());
                             walletS.setId(myApp.userSeller.getWalletId());
+                            scan.nextLine();///////////////
                             myApp.walletActions(null, myApp.userSeller, walletS, "update wallet", dao_Factory);
-                        } else if (ch.equals("logout") || ch.equals("6")) {
+                        } else if (ch.equals("list your products") || ch.equals("6")) {
+                            filterBy = filterByBlank;
+                            orderBy = orderByBlank;
+                            filterBy.setAttr("sellerId");
+                            filterBy.setL_val(String.format("%s", myApp.userSeller.getId()));;
+
+                            myApp.listingActions(filterBy, orderBy, dao_Factory);
+                        } else if (ch.equals("logout") || ch.equals("7")) {
                             System.out.println("Logging out...");
                             myApp.isLoggedIn = false;
                         } else {
@@ -319,10 +360,7 @@ public class EasyEcommApplication {
             System.out.println();
             System.out.println(
                     "=====================================================================================================================================");
-            System.out.println(
-                    "=====================================================================================================================================");
             System.out.println("Press enter to continue");
-            scan.nextLine();
         }
 
     }

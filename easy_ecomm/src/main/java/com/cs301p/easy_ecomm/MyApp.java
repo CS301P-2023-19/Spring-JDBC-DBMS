@@ -9,6 +9,8 @@ import com.cs301p.easy_ecomm.factoryClasses.DAO_Factory;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.transaction.TransactionDefinition;
@@ -33,9 +35,12 @@ import com.cs301p.easy_ecomm.mappers.ShippingDetailsDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
 import com.cs301p.easy_ecomm.mappers.WalletMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
+import com.cs301p.easy_ecomm.responseClasses.ReviewDataResponse;
 import com.cs301p.easy_ecomm.responseClasses.ShippingDetailsDataResponse;
 import com.cs301p.easy_ecomm.utilClasses.FilterBy;
 import com.cs301p.easy_ecomm.utilClasses.OrderBy;
+
+import de.vandermeer.asciitable.AsciiTable;
 
 public class MyApp {
     private PlatformTransactionManager platformTransactionManager;
@@ -45,6 +50,7 @@ public class MyApp {
     public Customer userCustomer;
     public Admin userAdmin;
     public boolean isLoggedIn = false;
+    private AsciiTable asciiTable = null;
 
     public MyApp(PlatformTransactionManager platformTransactionManager, JdbcTemplate jdbcTemplate) {
         this.platformTransactionManager = platformTransactionManager;
@@ -67,17 +73,28 @@ public class MyApp {
                 }
                 return (count);
             case "update product":
-            case "2":
+            case "3":
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
                 }
                 return (count);
             case "remove product":
-            case "3":
+            case "2":
                 count = productDAO.deleteProduct(product);
                 if (count > 0) {
                     System.out.println("Removed product with Id: " + product.getId());
+                } else if (count == 0) {
+                    System.out.println("Product to remove not found!");
+                } else {
+                    System.out.println(
+                            "The product you are trying to remove has been purchased by customer(s)\nWe can not remove it from our records, setting its quantity and price to 0...");
+                    product.setQuantityAvailable(0);
+                    product.setPrice((float)0.00);        
+                    count = productDAO.updateProduct(product);
+                    if (count > 0) {
+                        System.out.println("Updated product with Id: " + product.getId());
+                    }
                 }
                 return (count);
             default:
@@ -98,10 +115,19 @@ public class MyApp {
 
         System.out.println(
                 "-----------------------------------------------Requested products are:--------------------------------------------");
+        this.asciiTable = new AsciiTable();
+        this.asciiTable.addRule();
+        this.asciiTable.addRow("id", "type", "name", "sellerId", "price", "quantityAvailable");
+        this.asciiTable.addRule();
         for (Product product : products) {
-            System.out.println(product);
-            System.out.println();
+            // System.out.println(product);
+            this.asciiTable.addRow(product.getId(), product.getType(), product.getName(), product.getSellerId(),
+                    product.getPrice(), product.getQuantityAvailable());
+            this.asciiTable.addRule();
         }
+        String output = this.asciiTable.render(120);
+        System.out.println(output);
+        this.asciiTable = null;
         System.out.println(
                 "------------------------------------------------------------------------------------------------------------------");
 
@@ -168,7 +194,12 @@ public class MyApp {
                 }
                 break;
             case "check":
-                w_query = new Wallet(customer.getWalletId(), "-", null);
+                w_query = new Wallet(-1, null, null);
+                if (customer != null) {
+                    w_query = new Wallet(customer.getWalletId(), "-", null);
+                } else if (seller != null) {
+                    w_query = new Wallet(seller.getWalletId(), "-", null);
+                }
                 w = walletDAO.getWalletById(w_query);
                 if (w == null) {
                     System.out.println("Wallet not found for given customer Id: " + customer.getId());
@@ -181,13 +212,16 @@ public class MyApp {
             case "10":
                 if (customer != null) {
                     wallet.setId(customer.getWalletId());
-                } else {
+                } else if (seller != null) {
                     wallet.setId(seller.getWalletId());
                 }
                 count = walletDAO.updateWallet(wallet);
                 if (count > 0) {
                     System.out.println(
                             "Updated wallet with Id: " + wallet.getId() + "\nNew balance: " + wallet.getMoney());
+                } else {
+                    System.out.println(
+                            "Unable to update wallet, credit card number may already be in use or data provided is invalid");
                 }
                 break;
             default:
@@ -226,6 +260,8 @@ public class MyApp {
                                 "Insufficient quantity of product with Id: " + product.getId() + " available.");
                         return (-1);
                     }
+                } else {
+                    return (-1);
                 }
             case "update product in cart":
             case "4":
@@ -271,11 +307,21 @@ public class MyApp {
                 System.out.println(
                         "------------------------------------------------------------------------------------------");
                 System.out.println("Cart of customer with Id: " + c.getId());
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("productId", "name", "price", "quantity");
+                this.asciiTable.addRule();
                 for (CartItemDataResponse cartItemDataResponse : cartItemDataResponses) {
-                    System.out.println();
-                    System.out.println(cartItemDataResponse);
-                    System.out.println();
+                    // System.out.println();
+                    // System.out.println(cartItemDataResponse);
+                    // System.out.println();
+                    this.asciiTable.addRow(cartItemDataResponse.getProductId(), cartItemDataResponse.getName(),
+                            cartItemDataResponse.getPrice(), cartItemDataResponse.getQuantity());
+                    this.asciiTable.addRule();
                 }
+                String output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 System.out.println(
                         "------------------------------------------------------------------------------------------");
 
@@ -300,6 +346,7 @@ public class MyApp {
         try {
             if (!(customer.getWalletId() > 0)) {
                 System.out.println("Customer must link a wallet before purchase!");
+                platformTransactionManager.rollback(ts);
                 return (-1);
             }
             // Check cart of customer.
@@ -307,6 +354,7 @@ public class MyApp {
 
             if (cartItemDataResponses == null) {
                 System.out.println("Your cart is empty!");
+                platformTransactionManager.rollback(ts);
                 return (-2);
             }
 
@@ -320,6 +368,7 @@ public class MyApp {
                 if (p.getQuantity() > availableQuant) {
                     System.out.println("Insufficient quantity for productId: " + p.getProductId() + ", "
                             + availableQuant + " units are available.");
+                    platformTransactionManager.rollback(ts);
                     return (product.getId());
                 }
             }
@@ -356,15 +405,18 @@ public class MyApp {
 
                     if (seller == null) {
                         System.out.println("Seller offering the product not found!");
+                        platformTransactionManager.rollback(ts);
                         return (-1);
                     }
 
                     if (!(seller.getWalletId() > 0)) {
                         System.out.println("Wait! Seller does not have a linked wallet\nPlease remove product with Id: "
                                 + p.getProductId() + " from cart.");
+                        platformTransactionManager.rollback(ts);
                         return (p.getProductId());
                     }
 
+                    currentBalance = walletActions(null, seller, null, "check", dao_Factory);
                     updateWallet.setId(seller.getWalletId());
                     updateWallet.setCredit_card_no(walletDAO.getWalletById(updateWallet).getCredit_card_no());
                     updateWallet.setMoney(currentBalance + p.getPrice() * p.getQuantity());
@@ -392,6 +444,8 @@ public class MyApp {
 
                     if (count <= 0) {
                         System.out.println("INSERT INTO TRANSACTION -- ERROR:\n productID: " + p.getProductId());
+                        platformTransactionManager.rollback(ts);
+                        return (-3);
                     }
 
                     // Update quantity in products table.
@@ -399,9 +453,11 @@ public class MyApp {
                 } else {
                     System.out.println("Insufficient balance for product Id: " + p.getProductId());
                     System.out.println("Please remove it from cart.");
+                    platformTransactionManager.rollback(ts);
                     return (p.getProductId());
                 }
             }
+            System.out.println("Committing...");
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex);
@@ -482,7 +538,6 @@ public class MyApp {
         System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
-
         try {
             // Check if customer has purchased the product.
             TransactionDAO transactionDAO = dao_Factory.getTransactionDAO();
@@ -496,17 +551,28 @@ public class MyApp {
                     // If yes, update transaction table, 7-day policy is checked internally, check
                     // if already returned.
                     if (!transaction.getReturnStatus()) {
-                        Transaction updated_transaction = new Transaction(transaction.getId(),
-                                transaction.getCustomerId(),
-                                transaction.getSellerId(), transaction.getSellerId(), transaction.getDate(), true);
-                        count = transactionDAO.updateTransaction(updated_transaction);
 
-                        if (count > 0) {
-                            System.out.println(
-                                    "Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                        // Check 7-day return policy.
+                        LocalDate dateDB = transaction.getDate().toLocalDate();
+                        LocalDate dateSS = LocalDate.now();
+                        long days = ChronoUnit.DAYS.between(dateDB, dateSS);
+
+                        if (days <= 7) {
+                            String sql = "UPDATE transaction SET returnStatus=? WHERE customerId=? AND productId=? AND id=?;";
+                            count = this.jdbcTemplate.update(sql, true,
+                                    transaction.getCustomerId(),
+                                    transaction.getProductId(), transaction.getId());
+                            if (count > 0) {
+                                System.out.println(
+                                        "Returned product with Id: " + product.getId() + ", by " + customer.getId());
+                            } else {
+                                System.out.println("Unable to return product, check with seller.");
+                            }
                         } else {
-                            platformTransactionManager.rollback(ts);
+                            System.out.println("Too late to return the product.");
+                            return (-1);
                         }
+
                     } else {
                         System.out.println("Product with Id: " + transaction.getProductId() + ", bought on: "
                                 + transaction.getDate() + " was returned earlier!");
@@ -516,17 +582,18 @@ public class MyApp {
 
             if (cnt == 0) {
                 System.out.println("Can not return a product which hasn't been purchased!");
+                platformTransactionManager.rollback(ts);
                 return (-1);
             }
 
             platformTransactionManager.commit(ts);
-            return (count);
+            return (0);
         } catch (Exception ex) {
             System.out.println("Transaction Failed: " + ex.getMessage());
             platformTransactionManager.rollback(ts);
+            return (-1);
         }
 
-        return (0); // Success
     }
 
     // ADDITIONAL: Get customer address of a particular transaction. (IMT2021055).
@@ -562,11 +629,62 @@ public class MyApp {
         return (0);
     }
 
+    // Review Actions.
+    public int reviewActions(Customer customer, Product product, String choice, DAO_Factory dao_Factory) {
+        ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
+        List<ReviewDataResponse> reviews;
+        String output = "";
+        switch (choice.strip().toLowerCase()) {
+            case "view reviews by product":
+            case "12":
+                reviews = reviewDAO.getReviewsByProduct(product);
+
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "productId", "customerName", "productName", "stars (0-5)", "content");
+                this.asciiTable.addRule();
+
+                for (ReviewDataResponse r : reviews) {
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(),
+                            r.getStars(),
+                            r.getContent());
+                    this.asciiTable.addRule();
+                }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
+
+                break;
+
+            case "view your reviews":
+            case "11":
+                reviews = reviewDAO.getReviewsByCustomer(customer);
+
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "productId", "customerName", "productName", "stars (0-5)", "content");
+                this.asciiTable.addRule();
+
+                for (ReviewDataResponse r : reviews) {
+                    this.asciiTable.addRow(r.getId(), r.getProductId(), r.getCustomerName(), r.getProductName(),
+                            r.getStars(),
+                            r.getContent());
+                    this.asciiTable.addRule();
+                }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
+                break;
+        }
+        return (0);
+    }
+
     // Admin Actions.
     public int adminActions(Customer customer, Seller seller, String choice, DAO_Factory dao_Factory) {
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
         int count = -1;
+        String output = "";
         switch (choice.strip().toLowerCase()) {
             case "add customer":
             case "1":
@@ -592,7 +710,7 @@ public class MyApp {
             case "3":
                 count = customerDAO.deleteCustomer(customer);
                 if (count > 0) {
-                    System.out.println("Removed customer with email: " + customer.getEmail());
+                    System.out.println("Removed customer with Id: " + customer.getId());
                 } else {
                     System.out.println(
                             "Can not remove customer, no match found.");
@@ -602,7 +720,7 @@ public class MyApp {
             case "4":
                 count = sellerDAO.deleteSeller(seller);
                 if (count > 0) {
-                    System.out.println("Removed seller with email: " + customer.getEmail());
+                    System.out.println("Removed seller with email: " + seller.getId());
                 } else {
                     System.out.println(
                             "Can not remove seller, no match found.");
@@ -611,16 +729,35 @@ public class MyApp {
             case "list all customers":
             case "5":
                 List<Customer> customers = customerDAO.getAllCustomers();
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "name", "email", "address", "phone", "walletId");
+                this.asciiTable.addRule();
                 for (Customer c : customers) {
-                    System.out.println(c);
+                    // System.out.println(c);
+                    this.asciiTable.addRow(c.getId(), c.getName(), c.getEmail(), c.getAddress(), c.getPhone(),
+                            c.getWalletId());
+                    this.asciiTable.addRule();
                 }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 break;
             case "list all sellers":
             case "6":
                 List<Seller> sellers = sellerDAO.getAllSellers();
+                this.asciiTable = new AsciiTable();
+                this.asciiTable.addRule();
+                this.asciiTable.addRow("id", "name", "email", "phone", "walletId");
+                this.asciiTable.addRule();
                 for (Seller s : sellers) {
-                    System.out.println(s);
+                    // System.out.println(s);
+                    this.asciiTable.addRow(s.getId(), s.getName(), s.getEmail(), s.getPhone(), s.getWalletId());
+                    this.asciiTable.addRule();
                 }
+                output = this.asciiTable.render();
+                System.out.println(output);
+                this.asciiTable = null;
                 break;
             default:
                 break;
