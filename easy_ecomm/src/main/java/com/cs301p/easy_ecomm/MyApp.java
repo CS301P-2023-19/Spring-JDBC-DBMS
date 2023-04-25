@@ -103,7 +103,7 @@ public class MyApp {
         }
     }
 
-    // Usecase (B)
+    // Usecase (B) (IMT2021055)
     public int listingActions(FilterBy filterBy, OrderBy sortBy, DAO_Factory dao_Factory) {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         List<Product> products = productDAO.listProducts(filterBy, sortBy);
@@ -596,7 +596,7 @@ public class MyApp {
 
     }
 
-    // ADDITIONAL: Get customer address of a particular transaction. (IMT2021055).
+    // ADDITIONAL: Get current customer address of a particular transaction. (IMT2021055).
     public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -629,7 +629,7 @@ public class MyApp {
         return (0);
     }
 
-    // Review Actions.
+    // Review Actions. (IMT2021055)
     public int reviewActions(Customer customer, Product product, String choice, DAO_Factory dao_Factory) {
         ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
         List<ReviewDataResponse> reviews;
@@ -679,7 +679,7 @@ public class MyApp {
         return (0);
     }
 
-    // Admin Actions.
+    // Admin Actions. (IMT2021055)
     public int adminActions(Customer customer, Seller seller, String choice, DAO_Factory dao_Factory) {
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
@@ -766,7 +766,7 @@ public class MyApp {
         return (0);
     }
 
-    // Auth Actions
+    // Auth Actions (IMT2021055)
     public int authActions(String email, String password, String userType, DAO_Factory dao_Factory) {
         userAdmin = null;
         userCustomer = null;

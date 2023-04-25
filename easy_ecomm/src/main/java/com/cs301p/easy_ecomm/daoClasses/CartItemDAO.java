@@ -7,12 +7,13 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.cs301p.easy_ecomm.daoInterfaces.CartItemDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.CartItem;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.mappers.CartItemDataResponseMapper;
 import com.cs301p.easy_ecomm.responseClasses.CartItemDataResponse;
 
-public class CartItemDAO {
+public class CartItemDAO implements CartItemDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

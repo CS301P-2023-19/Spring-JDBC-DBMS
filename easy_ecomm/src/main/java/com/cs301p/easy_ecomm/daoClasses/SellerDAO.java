@@ -6,13 +6,12 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
 
+import com.cs301p.easy_ecomm.daoInterfaces.SellerDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Seller;
 import com.cs301p.easy_ecomm.mappers.SellerMapper;
 
-// @Component
-public class SellerDAO {
+public class SellerDAO implements SellerDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

@@ -9,14 +9,13 @@ import java.time.temporal.ChronoUnit;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
 
+import com.cs301p.easy_ecomm.daoInterfaces.TransactionDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.entityClasses.Transaction;
 import com.cs301p.easy_ecomm.mappers.TransactionMapper;
 
-// @Component
-public class TransactionDAO {
+public class TransactionDAO implements TransactionDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

@@ -8,13 +8,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.cs301p.easy_ecomm.daoInterfaces.ProductDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Seller;
 import com.cs301p.easy_ecomm.mappers.ProductMapper;
 import com.cs301p.easy_ecomm.utilClasses.FilterBy;
 import com.cs301p.easy_ecomm.utilClasses.OrderBy;
 
-public class ProductDAO {
+public class ProductDAO implements ProductDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;
