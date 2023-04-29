@@ -6,13 +6,12 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
 
+import com.cs301p.easy_ecomm.daoInterfaces.AdminDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Admin;
 import com.cs301p.easy_ecomm.mappers.AdminMapper;
 
-// @Component
-public class AdminDAO {
+public class AdminDAO implements AdminDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

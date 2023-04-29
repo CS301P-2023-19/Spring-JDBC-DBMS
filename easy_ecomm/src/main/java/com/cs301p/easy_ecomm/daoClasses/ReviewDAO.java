@@ -6,8 +6,8 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-// import org.springframework.stereotype.Component;
 
+import com.cs301p.easy_ecomm.daoInterfaces.ReviewDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.entityClasses.Product;
 import com.cs301p.easy_ecomm.entityClasses.Review;
@@ -15,8 +15,7 @@ import com.cs301p.easy_ecomm.mappers.ReviewDataResponseMapper;
 import com.cs301p.easy_ecomm.mappers.ReviewMapper;
 import com.cs301p.easy_ecomm.responseClasses.ReviewDataResponse;
 
-// @Component
-public class ReviewDAO {
+public class ReviewDAO implements ReviewDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

@@ -7,10 +7,11 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.cs301p.easy_ecomm.daoInterfaces.CustomerDAO_Int;
 import com.cs301p.easy_ecomm.entityClasses.Customer;
 import com.cs301p.easy_ecomm.mappers.CustomerMapper;
 
-public class CustomerDAO {
+public class CustomerDAO implements CustomerDAO_Int {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private PlatformTransactionManager platformTransactionManager;

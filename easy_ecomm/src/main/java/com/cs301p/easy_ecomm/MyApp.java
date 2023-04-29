@@ -58,7 +58,7 @@ public class MyApp {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Usecase (A) (IMT2021055)
+    // Usecase (A)
     public int sellerActions(Product product, String choice, DAO_Factory dao_Factory) {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         int count = -1;
@@ -134,7 +134,7 @@ public class MyApp {
         return (0);
     }
 
-    // Usecase (C) (IMT2021055)
+    // Usecase (C)
     public Float walletActions(Customer customer, Seller seller, Wallet wallet, String choice,
             DAO_Factory dao_Factory) {
         WalletDAO walletDAO = dao_Factory.getWalletDAO();
@@ -221,7 +221,7 @@ public class MyApp {
                             "Updated wallet with Id: " + wallet.getId() + "\nNew balance: " + wallet.getMoney());
                 } else {
                     System.out.println(
-                            "Unable to update wallet, credit card number may already be in use or data provided is invalid");
+                            "Unable to update wallet, wallet may not be linked or credit card number may already be in use, else check validity of data.");
                 }
                 break;
             default:
@@ -232,7 +232,7 @@ public class MyApp {
         return ((float) 0);
     }
 
-    // Usecase (D) (IMT2021055)
+    // Usecase (D)
     public int cartItemActions(CartItem cartItem, String choice, DAO_Factory dao_Factory) {
         CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
         ProductDAO productDAO = dao_Factory.getProductDAO();
@@ -332,7 +332,7 @@ public class MyApp {
         }
     }
 
-    // Usecase (E) (IMT2021055)
+    // Usecase (E)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -488,7 +488,7 @@ public class MyApp {
         return (0);
     }
 
-    // Usecase (F) (IMT2021055)
+    // Usecase (F)
     public int reviewProduct(Customer customer, Product product, int stars, String content, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -532,7 +532,7 @@ public class MyApp {
         return (-1); // Error.
     }
 
-    // Usecase (G) (IMT2021055)
+    // Usecase (G)
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -596,7 +596,7 @@ public class MyApp {
 
     }
 
-    // ADDITIONAL: Get customer address of a particular transaction. (IMT2021055).
+    // ADDITIONAL: Get current customer address of a particular transaction. (IMT2021055).
     public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -766,7 +766,7 @@ public class MyApp {
         return (0);
     }
 
-    // Auth Actions
+    // Auth Actions.
     public int authActions(String email, String password, String userType, DAO_Factory dao_Factory) {
         userAdmin = null;
         userCustomer = null;
