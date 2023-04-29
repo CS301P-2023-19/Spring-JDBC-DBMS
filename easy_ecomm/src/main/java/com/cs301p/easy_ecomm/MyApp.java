@@ -152,7 +152,7 @@ public class MyApp {
             case "link wallet":
             case "9":
                 System.out.println();
-                System.out.println("Initiate multiple actions...");
+                // System.out.println("Initiate multiple actions...");
                 TransactionDefinition td = new DefaultTransactionDefinition();
                 TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
                 try {
@@ -340,7 +340,7 @@ public class MyApp {
     // Usecase (E)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {
         System.out.println();
-        System.out.println("Initiate multiple actions...");
+        // System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
         ProductDAO productDAO = dao_Factory.getProductDAO();
@@ -496,7 +496,7 @@ public class MyApp {
     // Usecase (F)
     public int reviewProduct(Customer customer, Product product, int stars, String content, DAO_Factory dao_Factory) {
         System.out.println();
-        System.out.println("Initiate multiple actions...");
+        // System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
 
@@ -546,7 +546,7 @@ public class MyApp {
     // Usecase (G)
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
-        System.out.println("Initiate multiple actions...");
+        // System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
         try {
@@ -615,7 +615,7 @@ public class MyApp {
     // ADDITIONAL: Get current customer address of a particular transaction.
     public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
         System.out.println();
-        System.out.println("Initiate multiple actions...");
+        // System.out.println("Initiate multiple actions...");
         TransactionDefinition td = new DefaultTransactionDefinition();
         TransactionStatus ts = this.platformTransactionManager.getTransaction(td);
         String sql;
