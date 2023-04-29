@@ -58,7 +58,7 @@ public class MyApp {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Usecase (A) (IMT2021055)
+    // Usecase (A)
     public int sellerActions(Product product, String choice, DAO_Factory dao_Factory) {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         int count = -1;
@@ -103,7 +103,7 @@ public class MyApp {
         }
     }
 
-    // Usecase (B) (IMT2021055)
+    // Usecase (B)
     public int listingActions(FilterBy filterBy, OrderBy sortBy, DAO_Factory dao_Factory) {
         ProductDAO productDAO = dao_Factory.getProductDAO();
         List<Product> products = productDAO.listProducts(filterBy, sortBy);
@@ -134,7 +134,7 @@ public class MyApp {
         return (0);
     }
 
-    // Usecase (C) (IMT2021055)
+    // Usecase (C)
     public Float walletActions(Customer customer, Seller seller, Wallet wallet, String choice,
             DAO_Factory dao_Factory) {
         WalletDAO walletDAO = dao_Factory.getWalletDAO();
@@ -221,7 +221,7 @@ public class MyApp {
                             "Updated wallet with Id: " + wallet.getId() + "\nNew balance: " + wallet.getMoney());
                 } else {
                     System.out.println(
-                            "Unable to update wallet, credit card number may already be in use or data provided is invalid");
+                            "Unable to update wallet, wallet may not be linked or credit card number may already be in use, else check validity of data.");
                 }
                 break;
             default:
@@ -232,7 +232,7 @@ public class MyApp {
         return ((float) 0);
     }
 
-    // Usecase (D) (IMT2021055)
+    // Usecase (D)
     public int cartItemActions(CartItem cartItem, String choice, DAO_Factory dao_Factory) {
         CartItemDAO cartItemDAO = dao_Factory.getCartItemDAO();
         ProductDAO productDAO = dao_Factory.getProductDAO();
@@ -332,7 +332,7 @@ public class MyApp {
         }
     }
 
-    // Usecase (E) (IMT2021055)
+    // Usecase (E)
     public int purchaseCart(Customer customer, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -488,7 +488,7 @@ public class MyApp {
         return (0);
     }
 
-    // Usecase (F) (IMT2021055)
+    // Usecase (F)
     public int reviewProduct(Customer customer, Product product, int stars, String content, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -532,7 +532,7 @@ public class MyApp {
         return (-1); // Error.
     }
 
-    // Usecase (G) (IMT2021055)
+    // Usecase (G)
     public int returnProduct(Customer customer, Product product, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -629,7 +629,7 @@ public class MyApp {
         return (0);
     }
 
-    // Review Actions. (IMT2021055)
+    // Review Actions.
     public int reviewActions(Customer customer, Product product, String choice, DAO_Factory dao_Factory) {
         ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
         List<ReviewDataResponse> reviews;
@@ -679,7 +679,7 @@ public class MyApp {
         return (0);
     }
 
-    // Admin Actions. (IMT2021055)
+    // Admin Actions.
     public int adminActions(Customer customer, Seller seller, String choice, DAO_Factory dao_Factory) {
         CustomerDAO customerDAO = dao_Factory.getCustomerDAO();
         SellerDAO sellerDAO = dao_Factory.getSellerDAO();
@@ -766,7 +766,7 @@ public class MyApp {
         return (0);
     }
 
-    // Auth Actions (IMT2021055)
+    // Auth Actions.
     public int authActions(String email, String password, String userType, DAO_Factory dao_Factory) {
         userAdmin = null;
         userCustomer = null;
