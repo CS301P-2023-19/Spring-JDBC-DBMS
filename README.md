@@ -8,10 +8,17 @@
 - This project makes use of the spring-jdbc framework to work with a MySQL database and demonstrates several usecases pertaining to an ecommerce application.
 - The dependencies can be installed using the pom.xml file in the /easy_ecomm directory.
 
+- You can install maven by running:
+
 ```bash
-cd easy_ecomm
-mvn spring-boot:run
+sudo apt install maven
 ```
+
+- Setting up the application.properties.example and beans.xml.example files in the <project_root>/src/main/resources directory:
+    - In the application.properties file, replace "root" and "root" with your MySQL username and password for the spring.datasource.username and spring.datasource.password fields.
+    - In the beans.xml file, for the bean with id = "dataSource", replace "root" and "root" with your MySQL username and password for properties username and password.
+    - Rename both files and remove the trailing ".example" from their names.
+
 - If you do not have maven installed, you can run the project using an IDE such as VScode or IntelliJ.
 - You should have a MySQL server running on localhost, port 3306.
 
@@ -31,6 +38,13 @@ SOURCE <directory_where_the_project_is_cloned>/easy_ecomm/SQL/insert_ecomm.sql;
 ~~~~
 
 - The above statement will also setup an admin login for the project with a_name: 'DB_ADMIN' and a_password: 'ADMIN_PASS'
+
+- cd to the project root and run the project as follows:
+
+```bash
+cd easy_ecomm
+mvn spring-boot:run
+```
 
 ## Features
 - The application provides a user choice menu on startup where the user can choose to login as one of:
@@ -79,14 +93,3 @@ SOURCE <directory_where_the_project_is_cloned>/easy_ecomm/SQL/insert_ecomm.sql;
 cd easy_ecomm
 mvn spring-boot:run
 ```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first.
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
