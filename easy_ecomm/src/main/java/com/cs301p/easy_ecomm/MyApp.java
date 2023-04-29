@@ -70,8 +70,7 @@ public class MyApp {
                     System.out
                             .println("New product from seller with Id: " + product.getSellerId()
                                     + " added successfully!");
-                }
-                else{
+                } else {
                     System.out.println("Could not add product, check validity of data.");
                 }
                 return (count);
@@ -80,8 +79,7 @@ public class MyApp {
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
-                }
-                else{
+                } else {
                     System.out.println("Could not update product, check validity of data.");
                 }
                 return (count);
@@ -96,7 +94,7 @@ public class MyApp {
                     System.out.println(
                             "The product you are trying to remove has been purchased by customer(s)\nWe can not remove it from our records, setting its quantity and price to 0...");
                     product.setQuantityAvailable(0);
-                    product.setPrice((float)0.00);        
+                    product.setPrice((float) 0.00);
                     count = productDAO.updateProduct(product);
                     if (count > 0) {
                         System.out.println("Updated product with Id: " + product.getId());
@@ -161,7 +159,8 @@ public class MyApp {
                     count = walletDAO.addWallet(wallet);
                     if (!(count > 0)) {
                         System.out
-                                .println("Linking unsuccessful! Ensure that credit card number is not already in use and check validity of data.");
+                                .println(
+                                        "Linking unsuccessful! Ensure that credit card number is not already in use and check validity of data.");
                         return ((float) -1);
                     }
                     if (count > 0) {
@@ -194,7 +193,7 @@ public class MyApp {
                         System.out.println("Wallet add failed!");
                     }
                 } catch (Exception ex) {
-                    System.out.println("Transaction Failed: " + ex);
+                    System.out.println("Link wallet Failed: " + ex);
                     platformTransactionManager.rollback(ts);
                     return ((float) -1);
                 }
@@ -466,7 +465,7 @@ public class MyApp {
             System.out.println("Committing...");
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex);
+            System.out.println("Purchase unsuccessful: " + ex);
             platformTransactionManager.rollback(ts);
             return (-1);
         }
@@ -513,24 +512,30 @@ public class MyApp {
             List<Transaction> transactions = transactionDAO.getTransactionsByCustomer(customer);
             int count = 0;
 
-            for (Transaction transaction : transactions) {
-                if (transaction.getProductId() == product.getId()) {
-                    // If yes, add review.
-                    ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
-                    Review review = new Review(0, customer.getId(), product.getId(), stars, content);
-                    count = reviewDAO.addReview(review);
-                    if (count > 0) {
-                        System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
-                    } else {
-                        System.out.println("Unable to add review for specified product");
+            if (transactions == null) {
+                System.out.println("You haven't made any purchases yet!");
+                return(-1);
+            } else {
+                for (Transaction transaction : transactions) {
+                    if (transaction.getProductId() == product.getId()) {
+                        // If yes, add review.
+                        ReviewDAO reviewDAO = dao_Factory.getReviewDAO();
+                        Review review = new Review(0, customer.getId(), product.getId(), stars, content);
+                        count = reviewDAO.addReview(review);
+                        if (count > 0) {
+                            System.out.println("Added review for " + product.getId() + ", by " + customer.getId());
+                        } else {
+                            System.out.println("Unable to add review for specified product");
+                        }
+                        break;
                     }
-                    break;
                 }
+                platformTransactionManager.commit(ts);
+                return (count);
             }
-            platformTransactionManager.commit(ts);
-            return (count);
+
         } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex);
+            System.out.println("Review Failed: " + ex);
             platformTransactionManager.rollback(ts);
         }
 
@@ -595,14 +600,15 @@ public class MyApp {
             platformTransactionManager.commit(ts);
             return (0);
         } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex.getMessage());
+            System.out.println("Return Failed: " + ex.getMessage());
             platformTransactionManager.rollback(ts);
             return (-1);
         }
 
     }
 
-    // ADDITIONAL: Get current customer address of a particular transaction. (IMT2021055).
+    // ADDITIONAL: Get current customer address of a particular transaction.
+    // (IMT2021055).
     public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -628,7 +634,7 @@ public class MyApp {
                             + " lived at: " + res + ", phone: " + ph);
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
-            System.out.println("Transaction Failed: " + ex);
+            System.out.println("Request Failed: " + ex);
             platformTransactionManager.rollback(ts);
         }
 
