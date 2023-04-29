@@ -36,7 +36,7 @@ CREATE TABLE wallet(
     credit_card_no VARCHAR(20) NOT NULL UNIQUE,
     money DECIMAL(10,2) NOT NULL,
     CONSTRAINT walletPK PRIMARY KEY (id),
-    CONSTRAINT chkWallet CHECK (money > 0)
+    CONSTRAINT chkWallet CHECK (money >= 0)
 );
 
 CREATE TABLE product(
@@ -47,7 +47,7 @@ CREATE TABLE product(
     price DECIMAL(10,2) NOT NULL,
     quantityAvailable INT NOT NULL,
     CONSTRAINT productPK PRIMARY KEY (id),
-    CONSTRAINT chkProduct CHECK (price > 0 AND quantityAvailable > 0)
+    CONSTRAINT chkProduct CHECK (price > 0 AND quantityAvailable >= 0)
 );
 
 CREATE TABLE transaction(
