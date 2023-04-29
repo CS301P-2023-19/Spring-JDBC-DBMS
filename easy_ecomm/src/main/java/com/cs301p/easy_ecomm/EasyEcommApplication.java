@@ -119,6 +119,8 @@ public class EasyEcommApplication {
                         }
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity of data...");
+//                        scan = new Scanner(System.in);
+                        scan.nextLine();
                     }
 
                 } else if (q.equals("customer") || q.equals("2")) {
@@ -147,7 +149,6 @@ public class EasyEcommApplication {
                                     lowerLimit = scan.next();
                                     System.out.println("Enter the higher limit");
                                     higherLimit = scan.next();
-                                    System.out.println(higherLimit + "    " + lowerLimit);
                                     filterBy.setIsBetween(true);
                                     filterBy.setAttr("price");
                                     filterBy.setL_val(lowerLimit);
@@ -173,6 +174,9 @@ public class EasyEcommApplication {
                                 if (sortChoice.equals("quantity")) {
                                     orderBy.setAttr("quantityAvailable");
                                 } else if (sortChoice.equals("price")) {
+                                    orderBy.setAttr("price");
+                                } else {
+                                    System.out.println("Invalid Choice. Assuming Price");
                                     orderBy.setAttr("price");
                                 }
                                 System.out.println("Direction (asc/desc):");
@@ -244,7 +248,6 @@ public class EasyEcommApplication {
                             System.out.println("Enter number of stars for the product: (0-5)");
                             stars = scan.nextInt();
                             System.out.println("Enter review description:");
-                            scan.nextLine();
                             content = scan.nextLine();
                             scan.nextLine();///////////////
                             myApp.reviewProduct(customer, product, stars, content, dao_Factory);
@@ -283,6 +286,7 @@ public class EasyEcommApplication {
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity of data...");
                         // System.out.println(e.getMessage());
+                        scan.nextLine();
                     }
 
                 } else if (q.equals("seller") || q.equals("3")) {
@@ -345,6 +349,7 @@ public class EasyEcommApplication {
                         }
                     } catch (Exception e) {
                         System.out.println("Something went wrong! Check validity and type of data...");
+                        scan.nextLine();
                     }
 
                 } else {
