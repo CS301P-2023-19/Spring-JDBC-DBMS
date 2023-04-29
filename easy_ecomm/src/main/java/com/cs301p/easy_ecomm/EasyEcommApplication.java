@@ -45,9 +45,7 @@ public class EasyEcommApplication {
         while (true) {
             String ch = null;
             System.out.println();
-            System.out.println(
-                    "=====================================================================================================================================");
-
+            
             if (!myApp.isLoggedIn) {
                 q = appMenu.userMenu(scan);
 
@@ -358,9 +356,6 @@ public class EasyEcommApplication {
             }
 
             System.out.println();
-            System.out.println(
-                    "=====================================================================================================================================");
-            System.out.println("Press enter to continue");
         }
 
     }
