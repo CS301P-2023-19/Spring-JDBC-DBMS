@@ -193,7 +193,7 @@ public class MyApp {
                         System.out.println("Wallet add failed!");
                     }
                 } catch (Exception ex) {
-                    System.out.println("Link wallet Failed: " + ex);
+                    System.out.println("Link wallet Failed: check validity of data (Initial balance should be > 0)");
                     platformTransactionManager.rollback(ts);
                     return ((float) -1);
                 }
@@ -535,7 +535,7 @@ public class MyApp {
             }
 
         } catch (Exception ex) {
-            System.out.println("Review Failed: " + ex);
+            System.out.println("Review Failed! Can not add a review at this moment.");
             platformTransactionManager.rollback(ts);
         }
 
@@ -555,6 +555,11 @@ public class MyApp {
             List<Transaction> transactions = transactionDAO.getTransactionsByCustomer(customer);
             int count = -1;
             int cnt = 0;
+
+            if(transactions == null){
+                System.out.println("You haven't made any purchases yet.");
+                return(-1);
+            }
 
             for (Transaction transaction : transactions) {
                 if (transaction.getProductId() == product.getId()) {
@@ -600,7 +605,7 @@ public class MyApp {
             platformTransactionManager.commit(ts);
             return (0);
         } catch (Exception ex) {
-            System.out.println("Return Failed: " + ex.getMessage());
+            System.out.println("Return Failed: Unable to process your return request at this moment.");
             platformTransactionManager.rollback(ts);
             return (-1);
         }
@@ -608,7 +613,6 @@ public class MyApp {
     }
 
     // ADDITIONAL: Get current customer address of a particular transaction.
-    // (IMT2021055).
     public int getShippingAddress(Transaction transaction, DAO_Factory dao_Factory) {
         System.out.println();
         System.out.println("Initiate multiple actions...");
@@ -634,7 +638,7 @@ public class MyApp {
                             + " lived at: " + res + ", phone: " + ph);
             platformTransactionManager.commit(ts);
         } catch (Exception ex) {
-            System.out.println("Request Failed: " + ex);
+            System.out.println("Request Failed");
             platformTransactionManager.rollback(ts);
         }
 
