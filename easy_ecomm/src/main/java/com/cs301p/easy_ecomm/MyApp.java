@@ -71,12 +71,18 @@ public class MyApp {
                             .println("New product from seller with Id: " + product.getSellerId()
                                     + " added successfully!");
                 }
+                else{
+                    System.out.println("Could not add product, check validity of data.");
+                }
                 return (count);
             case "update product":
             case "3":
                 count = productDAO.updateProduct(product);
                 if (count > 0) {
                     System.out.println("Updated product with Id: " + product.getId());
+                }
+                else{
+                    System.out.println("Could not update product, check validity of data.");
                 }
                 return (count);
             case "remove product":
@@ -155,7 +161,7 @@ public class MyApp {
                     count = walletDAO.addWallet(wallet);
                     if (!(count > 0)) {
                         System.out
-                                .println("Linking unsuccessful! Ensure that credit card number is not already in use!");
+                                .println("Linking unsuccessful! Ensure that credit card number is not already in use and check validity of data.");
                         return ((float) -1);
                     }
                     if (count > 0) {
@@ -252,7 +258,7 @@ public class MyApp {
                                             + " added to cart by customer with Id: " + cartItem.getCustomerId());
                             return (count);
                         } else {
-                            System.out.println("Unable to add product to cart!");
+                            System.out.println("Unable to add product to cart, check validity of data.");
                             return (-1);
                         }
                     } else {
