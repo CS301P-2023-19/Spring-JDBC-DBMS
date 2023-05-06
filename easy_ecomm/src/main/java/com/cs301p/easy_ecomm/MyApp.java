@@ -716,7 +716,7 @@ public class MyApp {
             case "2":
                 count = sellerDAO.addSeller(seller);
                 if (count > 0) {
-                    System.out.println("Added seller with email: " + customer.getEmail());
+                    System.out.println("Added seller with email: " + seller.getEmail());
                 } else {
                     System.out.println(
                             "Can not add seller, either a duplicate email is present or invalid data provided.");
