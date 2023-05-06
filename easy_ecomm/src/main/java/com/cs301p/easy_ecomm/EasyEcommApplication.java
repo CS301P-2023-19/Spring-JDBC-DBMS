@@ -337,6 +337,7 @@ public class EasyEcommApplication {
                         } else if (ch.equals("list your products") || ch.equals("6")) {
                             filterBy = filterByBlank;
                             orderBy = orderByBlank;
+                            filterBy.setIsBetween(false);
                             filterBy.setAttr("sellerId");
                             filterBy.setL_val(String.format("%s", myApp.userSeller.getId()));;
 
