@@ -2,7 +2,7 @@
 
 - This project was made as part of the course: Database Systems Management - Lab (CS301P), at IIIT-Bangalore.
 
-## Requirenments and Running the Project
+## Requirements and Running the Project
 
 - The project is setup as a maven project and uses spring-boot.
 - This project makes use of the spring-jdbc framework to work with a MySQL database and demonstrates several usecases pertaining to an ecommerce application.
